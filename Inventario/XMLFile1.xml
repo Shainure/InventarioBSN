@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Reportes>
+  <Reporte nombre="Listado de XY">
+  <Header>
+    <Campo1 tipo="Texto" longitud="30" TipoSQL="varchar(30)">IdTarjeta</Campo1>
+    <Campo1 tipo="Texto" longitud="30" TipoSQL="varchar(30)">IdTarjeta</Campo1>
+  </Header>
+    <InfoBaseDatos>
+      <storedprocedure nombre="sp_obtenerListado">
+        <parametros>
+          <param1 nombre="@ID" VALUE="@"/>
+          <param1 nombre="@ID"/>
+          <param1 nombre="@ID"/>
+          <param1 nombre="@ID"/>
+          <param1 nombre="@ID" tipo="salida"/>
+          <param1 nombre="@ID" tipo="entrada"/>
+        </parametros>
+      </storedprocedure>
+    </InfoBaseDatos>
+  </Reporte>
+</Reportes>
