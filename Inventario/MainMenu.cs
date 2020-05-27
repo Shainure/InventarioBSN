@@ -241,14 +241,6 @@ namespace Inventario
             var reportes = new ReportesMenu();
             reportes.Closed += (s, args) => this.Close();
             reportes.Show();
-
-            //Reportes tarjetasConteos = new Reportes();
-
-            //tarjetasConteos.ExpConsolidadoNart();
-            //tarjetasConteos.ExpTarjetasConteos();
-
-            //Reporte Tarjetas_conteos
-            //tarjetasConteos.ExpTarjetasConteos();
         }
     }
 }

@@ -38,8 +38,8 @@
             this.rbTarjetasConteo = new System.Windows.Forms.RadioButton();
             this.titulo = new System.Windows.Forms.Label();
             this.btnConsolidar = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.BtnConteo = new System.Windows.Forms.Button();
+            this.BtnCerrar = new System.Windows.Forms.Button();
             this.gbReportes.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -160,26 +160,28 @@
             this.btnConsolidar.TabIndex = 8;
             this.btnConsolidar.Text = "Consultar";
             this.btnConsolidar.UseVisualStyleBackColor = true;
+            this.btnConsolidar.Click += new System.EventHandler(this.BtnConsolidar_Click);
             // 
-            // button1
+            // BtnConteo
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(177, 344);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 49);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Conteo";
-            this.button1.UseVisualStyleBackColor = true;
+            this.BtnConteo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnConteo.Location = new System.Drawing.Point(177, 344);
+            this.BtnConteo.Name = "BtnConteo";
+            this.BtnConteo.Size = new System.Drawing.Size(121, 49);
+            this.BtnConteo.TabIndex = 9;
+            this.BtnConteo.Text = "Conteo";
+            this.BtnConteo.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // BtnCerrar
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(321, 344);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(121, 49);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "Cerrar";
-            this.button2.UseVisualStyleBackColor = true;
+            this.BtnCerrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnCerrar.Location = new System.Drawing.Point(321, 344);
+            this.BtnCerrar.Name = "BtnCerrar";
+            this.BtnCerrar.Size = new System.Drawing.Size(121, 49);
+            this.BtnCerrar.TabIndex = 10;
+            this.BtnCerrar.Text = "Cerrar";
+            this.BtnCerrar.UseVisualStyleBackColor = true;
+            this.BtnCerrar.Click += new System.EventHandler(this.BtnCerrar_Click);
             // 
             // ReportesMenu
             // 
@@ -187,8 +189,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.ClientSize = new System.Drawing.Size(482, 414);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.BtnCerrar);
+            this.Controls.Add(this.BtnConteo);
             this.Controls.Add(this.btnConsolidar);
             this.Controls.Add(this.titulo);
             this.Controls.Add(this.gbReportes);
@@ -213,7 +215,7 @@
         private System.Windows.Forms.RadioButton rbConsolidadoConteo;
         private System.Windows.Forms.RadioButton rbTarjetasConteo;
         private System.Windows.Forms.Button btnConsolidar;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button BtnConteo;
+        private System.Windows.Forms.Button BtnCerrar;
     }
 }

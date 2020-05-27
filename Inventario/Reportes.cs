@@ -15,8 +15,7 @@ namespace Inventario
     {
         DataBaseConnection mysql = new DataBaseConnection();
 
-
-
+        //Reporte "Consolidado Conteo"
         public void ExpConsolidadoNart()
         {
             string selectQuery = "SELECT ci.codigo_prod, tbn.descripcion, ci.bodega, SUM(ci.cant_conteofinal) as conteoFinal FROM tbconteosinventario ci" +
@@ -104,8 +103,7 @@ namespace Inventario
         }
 
 
-
-        // Reporte tarjetas conteo
+        // Reporte "tarjetas conteo"
         public void ExpTarjetasConteos()
         {
             string selectQuery = "SELECT ci.numero_tarjeta, ci.codigo_prod, tbn.descripcion, ci.lote, ci.bodega, ci.ubicacion," +
@@ -190,6 +188,92 @@ namespace Inventario
 
             string path = Path.GetTempPath();                                                   //Para sacar la dirección de la carpeta temporal
             string tmpFile = Path.Combine(Path.GetTempPath(), "Tarjetas_conteos_"+anio+".xlsx");        //Junta dirección con nombre de archivo
+            sl.SaveAs(tmpFile);         //Guardo el archivo
+            System.Diagnostics.Process.Start(tmpFile);
+
+            mysql.CloseConnection();
+        }
+
+        //Reporte "diferencia conteo vs foto cierre"
+        public void ExpConteoVsCierre()
+        {
+            string selectQuery = "SELECT sb.codigo_prod, tbn.descripcion, SUM(CASE WHEN ci.cant_conteofinal >0 THEN ci.cant_conteofinal ELSE 0 END) as CantConteo, " +
+                "sb.cantidad as CantSaldo, (SUM(CASE WHEN ci.cant_conteofinal >0 THEN ci.cant_conteofinal ELSE 0 END))-sb.cantidad as Diferencia " +
+                "FROM tbsaldobodega sb INNER JOIN tbnart tbn ON sb.codigo_prod = tbn.codigo_prod " +
+                "INNER JOIN tbconteosinventario ci ON ci.codigo_prod = sb.codigo_prod GROUP BY sb.codigo_prod ORDER BY sb.codigo_prod;";
+
+            mysql.OpenConnection();
+            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
+            MySqlDataReader mdr = command.ExecuteReader();
+
+            int dataCell = 6;
+            var anio = DateTime.Now.ToString("yyyy");
+            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
+
+            SLDocument sl = new SLDocument();
+            sl.SetCellValue("A1", "BSN Medical LTDA");
+            sl.SetCellValue("A2", "Inventario " + anio);
+            sl.SetCellValue("A3", fecha);
+            sl.SetCellValue("A4", "Consolidiado conteo");
+
+            SLStyle estiloT = sl.CreateStyle();     //Estilo título
+            estiloT.Font.FontSize = 16;
+            estiloT.Font.Bold = true;
+            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
+            estiloC.Font.Bold = true;
+            sl.SetCellStyle("A4", estiloC);         //Imprime sin centrar
+            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            sl.SetCellStyle("A1", estiloT);
+            sl.SetCellStyle("A2", estiloC);
+            sl.SetCellStyle("A3", estiloC);
+
+            sl.MergeWorksheetCells("A1", "E1");      //Combino primeras celdas
+            sl.MergeWorksheetCells("A2", "E2");
+            sl.MergeWorksheetCells("A3", "E3");
+            sl.MergeWorksheetCells("A4", "B4");
+
+            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
+            sl.SetCellStyle("A6", "E6", estiloC);
+
+            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Consolidado");      //Nombre de la hoja
+            sl.SetCellValue("A" + dataCell, "Nart");
+            sl.SetCellValue("B" + dataCell, "Descripción");
+            sl.SetCellValue("C" + dataCell, "Conteo actual");
+            sl.SetCellValue("D" + dataCell, "Cantidad saldo");
+            sl.SetCellValue("E" + dataCell, "Diferencia");
+
+            while (mdr.Read())       //Lleno la tabla conlos datos del query
+            {
+                dataCell++;
+                sl.SetCellValue("A" + dataCell, mdr["codigo_prod"].ToString());
+                sl.SetCellValue("B" + dataCell, mdr["descripcion"].ToString());
+                sl.SetCellValue("C" + dataCell, Convert.ToInt32(mdr["CantConteo"]));
+                sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["CantSaldo"]));
+                sl.SetCellValue("E" + dataCell, Convert.ToInt32(mdr["Diferencia"]));
+            }
+
+            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
+            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
+            //estiloB.Alignment.Horizontal(Right);
+
+            sl.SetCellStyle("A6", "E" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
+            sl.AutoFitColumn("A", "E");                                     //Autoajustar columnas
+
+            SLStyle alignment = sl.CreateStyle();
+            alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
+            sl.SetCellStyle("C7", "E" + dataCell.ToString(), alignment);
+
+            SLStyle number = sl.CreateStyle();
+            number.FormatCode = "#,##0";
+            sl.SetCellStyle("C7", "E" + (dataCell + 1).ToString(), number);
+
+            string tmpFile = Path.Combine(Path.GetTempPath(), "Diferencia_conteo_vs_foto_cierre" + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
