@@ -30,6 +30,16 @@ namespace Inventario
             else if (rbDiferencia.Checked == true)              //Reporte 3
                 nuevoReporte.ExpConteoVsCierre();
 
+            else if (rbNartDigitados.Checked == true)           //Reporte 4
+                nuevoReporte.ExpNoDigitados(1);
+
+            else if (rbFotoCierre.Checked == true)              //Reporte 5
+                nuevoReporte.ExpNoDigitados(2);
+
+           // else if (rbNartDigitados.Checked == true)           //Reporte 6
+           //     nuevoReporte.ExpNoDigitados(1);
+
+
             else if (rbFaltante.Checked == true)                //Reporte 7
                 nuevoReporte.ExpTarjetasConteoFaltante();
 
