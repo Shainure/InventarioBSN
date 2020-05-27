@@ -21,13 +21,17 @@ namespace Inventario
         {
             Reportes nuevoReporte = new Reportes();
 
-            if (rbTarjetasConteo.Checked == true)
+            if (rbTarjetasConteo.Checked == true)               //Reporte 1
                 nuevoReporte.ExpTarjetasConteos();
 
-            else if (rbConsolidadoConteo.Checked == true)
+            else if (rbConsolidadoConteo.Checked == true)       //Reporte 2
                 nuevoReporte.ExpConsolidadoNart();
-            else if (rbDiferencia.Checked == true)
+
+            else if (rbDiferencia.Checked == true)              //Reporte 3
                 nuevoReporte.ExpConteoVsCierre();
+
+            else if (rbFaltante.Checked == true)                //Reporte 7
+                nuevoReporte.ExpTarjetasConteoFaltante();
 
         }
 

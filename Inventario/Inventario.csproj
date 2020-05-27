@@ -112,6 +112,7 @@
     <None Include="Resources\save.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\report.ico" />
     <Content Include="XMLFile1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

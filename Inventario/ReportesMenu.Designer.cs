@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReportesMenu));
             this.gbReportes = new System.Windows.Forms.GroupBox();
             this.rbFaltante = new System.Windows.Forms.RadioButton();
             this.rbTotalConteoFoto = new System.Windows.Forms.RadioButton();
@@ -194,6 +195,7 @@
             this.Controls.Add(this.btnConsolidar);
             this.Controls.Add(this.titulo);
             this.Controls.Add(this.gbReportes);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ReportesMenu";
             this.Text = "ReportesMenu";
             this.gbReportes.ResumeLayout(false);
