@@ -23,29 +23,19 @@ namespace Inventario
 
             if (rbTarjetasConteo.Checked == true)               //Reporte 1
                 nuevoReporte.ExpTarjetasConteos();
-
             else if (rbConsolidadoConteo.Checked == true)       //Reporte 2
                 nuevoReporte.ExpConsolidadoNart();
-
             else if (rbDiferencia.Checked == true)              //Reporte 3
                 nuevoReporte.ExpConteoVsCierre();
-
             else if (rbNartDigitados.Checked == true)           //Reporte 4
                 nuevoReporte.ExpNoDigitados(1);
-
             else if (rbFotoCierre.Checked == true)              //Reporte 5
                 nuevoReporte.ExpNoDigitados(2);
-
-           // else if (rbNartDigitados.Checked == true)           //Reporte 6
-           //     nuevoReporte.ExpNoDigitados(1);
-
-
+            else if (rbTotalConteoFoto.Checked == true)           //Reporte 6
+                nuevoReporte.ReporteTotales();
             else if (rbFaltante.Checked == true)                //Reporte 7
                 nuevoReporte.ExpTarjetasConteoFaltante();
-
         }
-
-
 
         private void BtnCerrar_Click(object sender, EventArgs e)
         {
@@ -53,6 +43,11 @@ namespace Inventario
             var menu = new MainMenu();
             menu.Closed += (s, args) => this.Close();
             menu.Show();
+        }
+
+        private void BtnConteo_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

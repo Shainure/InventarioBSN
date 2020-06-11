@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DocumentFormat.OpenXml.Wordprocessing;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
@@ -14,7 +15,6 @@ namespace Inventario
 {
     public partial class MainMenu : Form
     {
-
         //MySqlConnection connectionString = new MySqlConnection("server=localhost;user id=root;Pwd=root;database=dbi");
         //MySqlCommand command;
         //MySqlDataReader mdr;
@@ -22,9 +22,8 @@ namespace Inventario
         public MainMenu()
         {
             InitializeComponent();
-            date.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");    
+            date.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
-
 
         private void NumCheck(object sender, KeyPressEventArgs e)
         {
@@ -40,7 +39,7 @@ namespace Inventario
             if (e.KeyCode == Keys.Enter)
             {
                 int total = 0;
-                if(!String.IsNullOrEmpty(tb11.Text) && !String.IsNullOrEmpty(tb12.Text) && !String.IsNullOrEmpty(tb13.Text))
+                if (!String.IsNullOrEmpty(tb11.Text) && !String.IsNullOrEmpty(tb12.Text) && !String.IsNullOrEmpty(tb13.Text))
                 {
                     total += int.Parse(tb11.Text) * int.Parse(tb12.Text) * int.Parse(tb13.Text);
                 }
@@ -48,7 +47,7 @@ namespace Inventario
                 {
                     total += int.Parse(tb21.Text) * int.Parse(tb22.Text) * int.Parse(tb23.Text);
                 }
-                if(!String.IsNullOrEmpty(tb31.Text) && !String.IsNullOrEmpty(tb32.Text) && !String.IsNullOrEmpty(tb33.Text))
+                if (!String.IsNullOrEmpty(tb31.Text) && !String.IsNullOrEmpty(tb32.Text) && !String.IsNullOrEmpty(tb33.Text))
                 {
                     total += int.Parse(tb31.Text) * int.Parse(tb32.Text) * int.Parse(tb33.Text);
                 }
@@ -70,7 +69,7 @@ namespace Inventario
         {
             Char chr = e.KeyChar;
             int num = e.KeyChar;
-            
+
             if ((!Char.IsDigit(chr) && chr != 8) || (num == 48 || num > 51))
             {
                 e.Handled = true;
@@ -81,7 +80,7 @@ namespace Inventario
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if(String.IsNullOrEmpty(tbTarjeta.Text))
+                if (String.IsNullOrEmpty(tbTarjeta.Text))
                 {
                     MessageBox.Show("Debe ingresar el número de tarjeta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tbTarjeta.Focus();
@@ -107,7 +106,6 @@ namespace Inventario
                     //connectionString.Close();
                     info.CloseConnection();
                 }
-                
             }
         }
 
@@ -127,7 +125,7 @@ namespace Inventario
                     if (mdr.Read())
                     {
                         string aux = tbConteo.Text;     //Para sacar el número de conteo
-                        if(mdr.GetInt32("cant_conteo" + aux) != -1)
+                        if (mdr.GetInt32("cant_conteo" + aux) != -1)
                         {
                             MessageBox.Show("Esta tarjeta ya fue grabada.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
@@ -139,7 +137,6 @@ namespace Inventario
                     }
                     info.CloseConnection();
                 }
-
             }
         }
 
@@ -173,7 +170,6 @@ namespace Inventario
                         MessageBox.Show("No se pudo guardar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
             }
         }
 
@@ -212,7 +208,7 @@ namespace Inventario
         private void button1_Click(object sender, EventArgs e)
         {
             DataBaseConnection mysql = new DataBaseConnection();
-            if(mysql.CheckConnection() == false)
+            if (mysql.CheckConnection() == false)
             {
                 MessageBox.Show("¡La base de datos explotó!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -232,7 +228,7 @@ namespace Inventario
         {
             DataBaseConnection info = new DataBaseConnection();
             int filas = info.ConsolidarConteo();
-            MessageBox.Show("Se consoliidaron " +filas + " tarjetas en total.", "Conteo consolidado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Se consoliidaron " + filas + " tarjetas en total.", "Conteo consolidado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnReportes_Click(object sender, EventArgs e)
@@ -241,6 +237,30 @@ namespace Inventario
             var reportes = new ReportesMenu();
             reportes.Closed += (s, args) => this.Close();
             reportes.Show();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            DataBaseConnection mysql = new DataBaseConnection();
+            string selectQuery = "SELECT codigo_prod FROM tbsaldobodega;";
+
+            mysql.OpenConnection();
+            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
+            MySqlDataReader mdr = command.ExecuteReader();
+            String txt = "test";
+
+            if (!mdr.HasRows)
+            {
+                while (mdr.Read())
+                {
+                    txt += mdr["codigo_prod"].ToString() + "\n";
+                }
+            }
+            else
+            {
+                // return;
+            }
+            MessageBox.Show(txt);
         }
     }
 }

@@ -75,6 +75,7 @@ namespace Inventario
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.conectionCheck = new System.Windows.Forms.Button();
             this.btnGrabar = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.Conteo.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -589,12 +590,23 @@ namespace Inventario
             this.btnGrabar.UseVisualStyleBackColor = true;
             this.btnGrabar.Click += new System.EventHandler(this.btnGrabar_Click);
             // 
-            // Form1
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(492, 80);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 31;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(911, 461);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.conectionCheck);
             this.Controls.Add(this.btnCerrar);
@@ -611,7 +623,7 @@ namespace Inventario
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(927, 500);
             this.MinimumSize = new System.Drawing.Size(927, 500);
-            this.Name = "Form1";
+            this.Name = "MainMenu";
             this.Text = "Conteos Inventario BSN Medical";
             this.Conteo.ResumeLayout(false);
             this.Conteo.PerformLayout();
@@ -671,6 +683,7 @@ namespace Inventario
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button conectionCheck;
         private System.Windows.Forms.Button btnLimpiar;
+        private System.Windows.Forms.Button button1;
     }
 }
 

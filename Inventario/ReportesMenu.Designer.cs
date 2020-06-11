@@ -40,7 +40,7 @@
             this.titulo = new System.Windows.Forms.Label();
             this.btnConsolidar = new System.Windows.Forms.Button();
             this.BtnConteo = new System.Windows.Forms.Button();
-            this.BtnCerrar = new System.Windows.Forms.Button();
+            this.BtnVolver = new System.Windows.Forms.Button();
             this.gbReportes.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -166,23 +166,24 @@
             // BtnConteo
             // 
             this.BtnConteo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnConteo.Location = new System.Drawing.Point(177, 344);
+            this.BtnConteo.Location = new System.Drawing.Point(322, 344);
             this.BtnConteo.Name = "BtnConteo";
             this.BtnConteo.Size = new System.Drawing.Size(121, 49);
             this.BtnConteo.TabIndex = 9;
-            this.BtnConteo.Text = "Conteo";
+            this.BtnConteo.Text = "Cerrar";
             this.BtnConteo.UseVisualStyleBackColor = true;
+            this.BtnConteo.Click += new System.EventHandler(this.BtnConteo_Click);
             // 
-            // BtnCerrar
+            // BtnVolver
             // 
-            this.BtnCerrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnCerrar.Location = new System.Drawing.Point(321, 344);
-            this.BtnCerrar.Name = "BtnCerrar";
-            this.BtnCerrar.Size = new System.Drawing.Size(121, 49);
-            this.BtnCerrar.TabIndex = 10;
-            this.BtnCerrar.Text = "Cerrar";
-            this.BtnCerrar.UseVisualStyleBackColor = true;
-            this.BtnCerrar.Click += new System.EventHandler(this.BtnCerrar_Click);
+            this.BtnVolver.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnVolver.Location = new System.Drawing.Point(175, 344);
+            this.BtnVolver.Name = "BtnVolver";
+            this.BtnVolver.Size = new System.Drawing.Size(121, 49);
+            this.BtnVolver.TabIndex = 10;
+            this.BtnVolver.Text = "Volver";
+            this.BtnVolver.UseVisualStyleBackColor = true;
+            this.BtnVolver.Click += new System.EventHandler(this.BtnCerrar_Click);
             // 
             // ReportesMenu
             // 
@@ -190,14 +191,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.ClientSize = new System.Drawing.Size(482, 414);
-            this.Controls.Add(this.BtnCerrar);
+            this.Controls.Add(this.BtnVolver);
             this.Controls.Add(this.BtnConteo);
             this.Controls.Add(this.btnConsolidar);
             this.Controls.Add(this.titulo);
             this.Controls.Add(this.gbReportes);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ReportesMenu";
-            this.Text = "ReportesMenu";
+            this.Text = "Reportes";
             this.gbReportes.ResumeLayout(false);
             this.gbReportes.PerformLayout();
             this.ResumeLayout(false);
@@ -218,6 +219,6 @@
         private System.Windows.Forms.RadioButton rbTarjetasConteo;
         private System.Windows.Forms.Button btnConsolidar;
         private System.Windows.Forms.Button BtnConteo;
-        private System.Windows.Forms.Button BtnCerrar;
+        private System.Windows.Forms.Button BtnVolver;
     }
 }
