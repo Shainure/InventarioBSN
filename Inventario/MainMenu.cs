@@ -226,9 +226,15 @@ namespace Inventario
 
         private void btnConsolidar_Click(object sender, EventArgs e)
         {
-            DataBaseConnection info = new DataBaseConnection();
-            int filas = info.ConsolidarConteo();
-            MessageBox.Show("Se consoliidaron " + filas + " tarjetas en total.", "Conteo consolidado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (MessageBox.Show("¿Desea consolidar los registros?", "Confirmación",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes)
+            {
+                DataBaseConnection info = new DataBaseConnection();
+                int filas = info.ConsolidarConteo();
+                MessageBox.Show("Se consoliidaron " + filas + " tarjetas en total.", "Conteo consolidado",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void btnReportes_Click(object sender, EventArgs e)

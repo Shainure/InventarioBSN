@@ -10,12 +10,27 @@ using DocumentFormat.OpenXml.EMMA;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.Remoting.Messaging;
+using Microsoft.Office.Interop.Excel;
 
 namespace Inventario
 {
     internal class Reportes
     {
         private DataBaseConnection mysql = new DataBaseConnection();
+
+        private string FilePath(string fileName)
+        {
+            string tmpFile = Path.Combine(Path.GetTempPath(), fileName);
+            string aux = tmpFile;
+            int x = 1;
+            while (File.Exists(tmpFile + ".xlsx"))
+            {
+                tmpFile = aux + " (" + x + ")";
+                x++;
+            }
+            tmpFile += ".xlsx";
+            return tmpFile;
+        }
 
         // Reporte "tarjetas conteo"                        --1/9   ◘◘◘◘
         public void ExpTarjetasConteos()
@@ -27,9 +42,8 @@ namespace Inventario
             MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -106,8 +120,7 @@ namespace Inventario
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
             sl.SetCellStyle("G7", "I" + dataCell.ToString(), alignment);
 
-            string path = Path.GetTempPath();                                                   //Para sacar la dirección de la carpeta temporal
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Tarjetas_conteos_" + anio + ".xlsx");        //Junta dirección con nombre de archivo
+            string tmpFile = FilePath("Tarjetas_conteos_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
@@ -125,9 +138,8 @@ namespace Inventario
             MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -219,9 +231,8 @@ namespace Inventario
             MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -323,7 +334,7 @@ namespace Inventario
                 Query = "SELECT distinct codigo_prod, lote as campo2 FROM tbconteosinventario where codigo_prod not in (SELECT codigo_prod FROM tbnart);";
                 campo2 = "Lote";
                 fileName = "Narts_digitados_no_estan_en_cierre_";
-                sub = "Narts digitados que no están en cierre";
+                sub = "Narts digitados que no están en foto cierre";
             }
             else if (x == 2)
             {
@@ -337,9 +348,8 @@ namespace Inventario
             MySqlCommand command = new MySqlCommand(Query, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -419,9 +429,8 @@ namespace Inventario
             MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -509,7 +518,7 @@ namespace Inventario
             sl.SetCellStyle("C7", "D" + (dataCell + 1).ToString(), number);
 
             string tmpFile = Path.Combine(Path.GetTempPath(), "Total_conteo_y_foto_cierre_" + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
-            sl.SaveAs(tmpFile);         //Guardo el archivo
+            sl.SaveAs(tmpFile);         //Guardo el archivoa
             System.Diagnostics.Process.Start(tmpFile);
 
             mysql.CloseConnection();
@@ -520,14 +529,14 @@ namespace Inventario
         {
             string selectQuery = "SELECT ci.numero_tarjeta, ci.codigo_prod, tbn.descripcion, ci.lote, ci.cant_conteo1, ci.cant_conteo2, ci.cant_conteo3 " +
                     "FROM tbconteosinventario ci INNER JOIN tbnart tbn ON ci.codigo_prod = tbn.codigo_prod " +
-                    "WHERE ci.cant_conteo1 = -1 AND ci.cant_conteo2 = -1 AND ci.cant_conteo3 = -1 ORDER BY ci.numero_tarjeta;";
+                    "WHERE ci.cant_conteo1 = -1 OR ci.cant_conteo2 = -1 ORDER BY ci.numero_tarjeta;";
+            // OR ci.cant_conteo3 = -1
             mysql.OpenConnection();
             MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
             MySqlDataReader mdr = command.ExecuteReader();
 
-            if (!mdr.HasRows)
+            if (avisoSinDatos(mdr))
             {
-                MessageBox.Show("No hay datos disponibles.");
                 return;
             }
 
@@ -601,11 +610,21 @@ namespace Inventario
             sl.SetCellStyle("G7", "G" + dataCell.ToString(), alignment);
 
             string path = Path.GetTempPath();                                                   //Para sacar la dirección de la carpeta temporal
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Tarjetas_conteo_faltante" + anio + ".xlsx");        //Junta dirección con nombre de archivo
+            string tmpFile = Path.Combine(Path.GetTempPath(), "Tarjetas_conteo_faltante_" + anio + ".xlsx");        //Junta dirección con nombre de archivo
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
-
             mysql.CloseConnection();
+        }
+
+        private bool avisoSinDatos(MySqlDataReader mdr)
+        {
+            if (!mdr.HasRows)
+            {
+                MessageBox.Show("No se encontró información.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                return true;
+            }
+            return false;
         }
     }
 }
