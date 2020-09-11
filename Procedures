@@ -1,0 +1,15 @@
+// Información de la tarjeta (Panel derecho del menú principal)
+
+CREATE PROCEDURE inf_tarjeta
+
+(
+    @VAR int 
+)
+AS
+BEGIN
+--SET NOCOUNT ON;    
+SELECT ci.codigo_prod, tbn.descripcion, ci.lote, ci.bodega, ci.ubicacion FROM tbconteosinventario ci
+INNER JOIN tbnart tbn 
+ON ci.codigo_prod = tbn.codigo_prod 
+WHERE numero_tarjeta= @VAR
+END
