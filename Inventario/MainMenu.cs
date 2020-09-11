@@ -2,23 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.Wordprocessing;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 
 namespace Inventario
 {
     public partial class MainMenu : Form
     {
-        //MySqlConnection connectionString = new MySqlConnection("server=localhost;user id=root;Pwd=root;database=dbi");
-        //MySqlCommand command;
-        //MySqlDataReader mdr;
-
         public MainMenu()
         {
             InitializeComponent();
@@ -87,15 +82,19 @@ namespace Inventario
                 }
                 else
                 {
-                    DataBaseConnection info = new DataBaseConnection();
-                    MySqlDataReader mdr = info.QueryInfo(int.Parse(tbTarjeta.Text));
-                    if (mdr.Read())
+                    DataBaseConnection db = new DataBaseConnection();
+                    string selectQuery = "SELECT ci.codigo_prod, tbn.descripcion, ci.lote, ci.bodega, ci.ubicacion FROM tbconteosinventario ci " +
+                            "INNER JOIN tbnart tbn ON ci.codigo_prod = tbn.codigo_prod WHERE numero_tarjeta = " + tbTarjeta.Text;
+
+                    SqlDataReader sdr = db.SqlCommand(selectQuery, false);
+
+                    if (sdr.Read())
                     {
-                        tbNart.Text = mdr.GetString("codigo_prod");
-                        tbLote.Text = mdr.GetString("lote");
-                        tbBodega.Text = mdr.GetInt32("bodega").ToString();
-                        tbUbic.Text = mdr.GetString("ubicacion");
-                        tbDesc.Text = mdr.GetString("descripcion");
+                        tbNart.Text = Convert.ToString(sdr["codigo_prod"]);
+                        tbLote.Text = Convert.ToString(sdr["lote"]);
+                        tbBodega.Text = Convert.ToString(sdr["bodega"]);
+                        tbUbic.Text = Convert.ToString(sdr["ubicacion"]);
+                        tbDesc.Text = Convert.ToString(sdr["descripcion"]);
                         tbConteo.Enabled = true;
                         SendKeys.Send("{TAB}");
                     }
@@ -103,8 +102,7 @@ namespace Inventario
                     {
                         MessageBox.Show("¡Tarjeta no encontrada!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    //connectionString.Close();
-                    info.CloseConnection();
+                    db.CloseConnection();
                 }
             }
         }
@@ -120,12 +118,14 @@ namespace Inventario
                 }
                 else
                 {
-                    DataBaseConnection info = new DataBaseConnection();
-                    MySqlDataReader mdr = info.QueryConteo(int.Parse(tbTarjeta.Text), int.Parse(tbConteo.Text));
-                    if (mdr.Read())
+                    DataBaseConnection db = new DataBaseConnection();
+                    string selectQuery = "select cant_conteo" + tbConteo.Text + " from tbconteosinventario where numero_tarjeta= " + tbTarjeta.Text;
+                    SqlDataReader reader = db.SqlCommand(selectQuery, false);
+
+                    if (reader.Read())
                     {
-                        string aux = tbConteo.Text;     //Para sacar el número de conteo
-                        if (mdr.GetInt32("cant_conteo" + aux) != -1)
+                        string aux = "cant_conteo" + tbConteo.Text;     //Para sacar el número de conteo
+                        if (Convert.ToInt32(reader[aux]) != -1)
                         {
                             MessageBox.Show("Esta tarjeta ya fue grabada.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
@@ -135,7 +135,7 @@ namespace Inventario
                     {
                         MessageBox.Show("Error en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    info.CloseConnection();
+                    db.CloseConnection();
                 }
             }
         }
@@ -152,20 +152,17 @@ namespace Inventario
                 }
                 else
                 {
-                    DataBaseConnection info = new DataBaseConnection();
-                    bool grabar = info.GrabarConteo(tbTarjeta.Text, tbConteo.Text, tbTotal.Text);
-                    if (grabar)
+                    DataBaseConnection db = new DataBaseConnection();
+                    string updateQuery = "UPDATE tbconteosinventario SET cant_conteo" + tbConteo.Text + " = " + tbTotal.Text + ", estado=1 WHERE numero_tarjeta=" + tbTarjeta.Text;
+
+                    try
                     {
-                        tbConteo.Enabled = false;
-                        tbTarjeta.Focus();
-                        bool conteo3 = info.TercerConteo(tbTarjeta.Text);
-                        if (conteo3)
-                        {
-                            MessageBox.Show("La tarjeta #" + (tbTarjeta.Text) + " requiere tercer conteo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
+                        SqlDataReader reader = db.SqlCommand(updateQuery, false);
+                        db.CloseConnection();
+                        MessageBox.Show("La tarjeta #" + (tbTarjeta.Text) + " requiere tercer conteo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         limpiar();
                     }
-                    else
+                    catch
                     {
                         MessageBox.Show("No se pudo guardar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -198,6 +195,7 @@ namespace Inventario
             tbBodega.Text = "";
             tbUbic.Text = "";
             tbTotal.Text = "";
+            tbConteo.Enabled = false;
         }
 
         private void btnCerrar_Click(object sender, EventArgs e)
@@ -207,14 +205,15 @@ namespace Inventario
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DataBaseConnection mysql = new DataBaseConnection();
-            if (mysql.CheckConnection() == false)
+            DataBaseConnection db = new DataBaseConnection();
+
+            if (db.CheckConnection())
             {
-                MessageBox.Show("¡La base de datos explotó!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("¡Funcionó esta cosa!", "Conexión exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("Conexión exitosa.", "¡Funcionó esta cosa!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("¡Explotó esta vaina!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -232,7 +231,7 @@ namespace Inventario
             {
                 DataBaseConnection info = new DataBaseConnection();
                 int filas = info.ConsolidarConteo();
-                MessageBox.Show("Se consoliidaron " + filas + " tarjetas en total.", "Conteo consolidado",
+                MessageBox.Show("Se consolidaron " + filas + " tarjetas en total.", "Conteo consolidado",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -247,26 +246,29 @@ namespace Inventario
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            DataBaseConnection mysql = new DataBaseConnection();
-            string selectQuery = "SELECT codigo_prod FROM tbsaldobodega;";
+            //DataBaseConnection.SqlCommand("rpt_test");
 
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
-            String txt = "test";
-
-            if (!mdr.HasRows)
-            {
-                while (mdr.Read())
+            //using (SqlConnection connection = new SqlConnection(@"Data Source=TEST\SQLEXPRESS;Initial Catalog = DBI; Persist Security Info=True;User ID = TestLogin; Password=12345"))
+            //using (SqlCommand cmd = new SqlCommand("rpt_test", connection) { CommandType = CommandType.StoredProcedure})
+            /*{
+                //cmd.Parameters.AddWithValue("numTarj", firstName);
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    txt += mdr["codigo_prod"].ToString() + "\n";
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            MessageBox.Show("{0}\t{1}\n" + Convert.ToString(reader.GetInt32(0)) + "\t" + reader.GetString(1));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Explotó");
+                    }
+                    reader.Close();
                 }
-            }
-            else
-            {
-                // return;
-            }
-            MessageBox.Show(txt);
+            }*/
         }
     }
 }

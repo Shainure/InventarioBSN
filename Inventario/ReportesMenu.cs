@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Inventario
@@ -31,7 +24,7 @@ namespace Inventario
                 nuevoReporte.ExpNoDigitados(1);
             else if (rbFotoCierre.Checked == true)              //Reporte 5
                 nuevoReporte.ExpNoDigitados(2);
-            else if (rbTotalConteoFoto.Checked == true)           //Reporte 6
+            else if (rbTotalConteoFoto.Checked == true)         //Reporte 6
                 nuevoReporte.ReporteTotales();
             else if (rbFaltante.Checked == true)                //Reporte 7
                 nuevoReporte.ExpTarjetasConteoFaltante();

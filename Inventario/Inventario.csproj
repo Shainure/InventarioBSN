@@ -85,6 +85,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBaseConnection.cs" />
+    <Compile Include="DBIDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DBIDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="MainMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +121,17 @@
     <EmbeddedResource Include="ReportesMenu.resx">
       <DependentUpon>ReportesMenu.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="DBIDataSet.xsc">
+      <DependentUpon>DBIDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="DBIDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DBIDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DBIDataSet.xss">
+      <DependentUpon>DBIDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Inventario_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

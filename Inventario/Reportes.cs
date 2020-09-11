@@ -1,5 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using SpreadsheetLight;
+﻿using SpreadsheetLight;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -11,12 +10,18 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.Remoting.Messaging;
 using Microsoft.Office.Interop.Excel;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Inventario
 {
     internal class Reportes
     {
-        private DataBaseConnection mysql = new DataBaseConnection();
+        private DataBaseConnection sqlDB = new DataBaseConnection();
+        private readonly string anio = DateTime.Now.ToString("yyyy");
+        private readonly string fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
+        private int dataCell = 6;
+        private char chColumna = 'A';
 
         private string FilePath(string fileName)
         {
@@ -25,7 +30,7 @@ namespace Inventario
             int x = 1;
             while (File.Exists(tmpFile + ".xlsx"))
             {
-                tmpFile = aux + " (" + x + ")";
+                tmpFile = aux + "_(" + x + ")";
                 x++;
             }
             tmpFile += ".xlsx";
@@ -35,84 +40,15 @@ namespace Inventario
         // Reporte "tarjetas conteo"                        --1/9   ◘◘◘◘
         public void ExpTarjetasConteos()
         {
-            string selectQuery = "SELECT ci.numero_tarjeta, ci.codigo_prod, tbn.descripcion, ci.lote, ci.bodega, ci.ubicacion," +
-                        "ci.cant_conteo1, ci.cant_conteo2, ci.cant_conteo3 FROM tbconteosinventario ci INNER JOIN tbnart tbn ON " +
-                        "ci.codigo_prod = tbn.codigo_prod ORDER by ci.numero_tarjeta;";
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
+            SqlDataReader mdr = sqlDB.SqlCommand("rpt_tarjetas_conteo", true);
 
-            if (avisoSinDatos(mdr))
+            if (!avisoSinDatos(mdr))
             {
                 return;
             }
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
             SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", "Tarjetas ingresadas");
-
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-            estiloC.Font.Bold = true;
-
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
-            sl.SetCellStyle("A4", estiloC);
-
-            sl.MergeWorksheetCells("A1", "I1");      //Combino priimeras celdas
-            sl.MergeWorksheetCells("A2", "I2");
-            sl.MergeWorksheetCells("A3", "I3");
-            sl.MergeWorksheetCells("A4", "B4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);
-            sl.SetCellStyle("A6", "I6", estiloC);
-
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Tb Conteos");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nro. Tarjeta");
-            sl.SetCellValue("B" + dataCell, "Nart");
-            sl.SetCellValue("C" + dataCell, "Descripción");
-            sl.SetCellValue("D" + dataCell, "Lote");
-            sl.SetCellValue("E" + dataCell, "Bodega");
-            sl.SetCellValue("F" + dataCell, "Ubicación");
-            sl.SetCellValue("G" + dataCell, "Conteo1");
-            sl.SetCellValue("H" + dataCell, "Conteo2");
-            sl.SetCellValue("I" + dataCell, "Conteo3");
-
-            while (mdr.Read())       //Lleno la tabla conlos datos del query
-            {
-                dataCell++;
-                sl.SetCellValue("A" + dataCell, Convert.ToInt32(mdr["numero_tarjeta"]));
-                sl.SetCellValue("B" + dataCell, mdr["codigo_prod"].ToString());
-                sl.SetCellValue("C" + dataCell, mdr["descripcion"].ToString());
-                sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["lote"]));
-                sl.SetCellValue("E" + dataCell, Convert.ToInt32(mdr["bodega"]));
-                sl.SetCellValue("F" + dataCell, mdr["ubicacion"].ToString());
-                sl.SetCellValue("G" + dataCell, Convert.ToInt32(mdr["cant_conteo1"]));
-                sl.SetCellValue("H" + dataCell, Convert.ToInt32(mdr["cant_conteo2"]));
-                sl.SetCellValue("I" + dataCell, Convert.ToInt32(mdr["cant_conteo3"]));
-            }
-
-            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            sl.SetCellStyle("A6", "I" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "I");                                     //Autoajustar columnas
+            sl = GenerarReporte(sl, mdr, "Tarjetas conteo", "Tarjetas");
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Center;
@@ -124,81 +60,94 @@ namespace Inventario
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
-            mysql.CloseConnection();
+            sqlDB.CloseConnection();
         }
 
-        //Reporte "Consolidado Conteo"                      --2/4   ◘◘◘◘
-        public void ExpConsolidadoNart()
+        private SLDocument GenerarReporte(SLDocument sld, SqlDataReader reader, string subTitulo, string nomPag)
         {
-            string selectQuery = "SELECT ci.codigo_prod, tbn.descripcion, ci.bodega, SUM(ci.cant_conteofinal) as conteoFinal FROM tbconteosinventario ci" +
-                " INNER JOIN tbnart tbn ON ci.codigo_prod = tbn.codigo_prod WHERE ci.cant_conteofinal !=-1 GROUP BY ci.codigo_prod ORDER BY ci.codigo_prod;";
-            //WHERE ci.cant_conteofinal !=-1
+            dataCell = 6;
+            int numColumna = reader.FieldCount;                         //Número de columnas
+            chColumna = (char)(64 + reader.FieldCount);            //Número de columnas  max en letra (para excel)
 
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
+            SqlDataReader rdr = reader;
+            var table = rdr.GetSchemaTable();       //Obtengo nombre de columnas
+            SLDocument newSld = sld;
 
-            if (avisoSinDatos(mdr))
-            {
-                return;
-            }
+            newSld.SetCellValue("A1", "BSN Medical LTDA");
+            newSld.SetCellValue("A2", "Inventario " + anio);
+            newSld.SetCellValue("A3", fecha);
+            newSld.SetCellValue("A4", subTitulo);
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
-            SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", "Consolidado conteo");
-
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
+            SLStyle estiloT = newSld.CreateStyle();     //Estilo título
             estiloT.Font.FontSize = 16;
             estiloT.Font.Bold = true;
             estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
 
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
+            SLStyle estiloC = newSld.CreateStyle();     //Estilo cabeceras
             estiloC.Font.Bold = true;
-            sl.SetCellStyle("A4", estiloC);         //Imprime sin centrar
+            newSld.SetCellStyle("A4", estiloC);         //Imprime sin centrar
             estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
 
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
+            newSld.SetCellStyle("A1", estiloT);
+            newSld.SetCellStyle("A2", estiloC);
+            newSld.SetCellStyle("A3", estiloC);
 
-            sl.MergeWorksheetCells("A1", "D1");      //Combino primeras celdas
-            sl.MergeWorksheetCells("A2", "D2");
-            sl.MergeWorksheetCells("A3", "D3");
-            sl.MergeWorksheetCells("A4", "B4");
+            newSld.MergeWorksheetCells("A1", chColumna + "1");      //Combino primeras celdas
+            newSld.MergeWorksheetCells("A2", chColumna + "2");
+            newSld.MergeWorksheetCells("A3", chColumna + "3");
+            newSld.MergeWorksheetCells("A4", chColumna + "4");
 
             estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            sl.SetCellStyle("A6", "D6", estiloC);
+            newSld.SetCellStyle("A6", chColumna + "6", estiloC);
 
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Consolidado");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nart");
-            sl.SetCellValue("B" + dataCell, "Descripción");
-            sl.SetCellValue("C" + dataCell, "Bodega");
-            sl.SetCellValue("D" + dataCell, "Cant Total Conteo");
+            newSld.RenameWorksheet(SLDocument.DefaultFirstSheetName, nomPag);      //Nombre de la hoja
 
-            while (mdr.Read())       //Lleno la tabla conlos datos del query
+            int letraCol = 65; //Letra de columna (convierto a char luego)
+
+            var result = new List<string>();
+            foreach (DataRow row in table.Rows)                                 //Lleno nombre de columnas
             {
-                dataCell++;
-                sl.SetCellValue("A" + dataCell, mdr["codigo_prod"].ToString());
-                sl.SetCellValue("B" + dataCell, mdr["descripcion"].ToString());
-                sl.SetCellValue("C" + dataCell, Convert.ToInt32(mdr["bodega"]));
-                sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["conteoFinal"]));
+                newSld.SetCellValue((char)letraCol + dataCell.ToString(), row.Field<string>("ColumnName"));
+
+                letraCol++;
             }
 
-            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
+            while (rdr.Read())       //Lleno la tabla conlos datos del query
+            {
+                dataCell++;
+                letraCol = 65;
+                for (int i = 0; i < numColumna; i++)
+                {
+                    newSld.SetCellValue((char)letraCol + dataCell.ToString(), rdr.GetValue(i).ToString());
+                    letraCol++;
+                }
+            }
+
+            SLStyle estiloB = newSld.CreateStyle(); //Creo estilo para bordes
             estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
             estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
             estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
             estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
             //estiloB.Alignment.Horizontal(Right);
 
-            sl.SetCellStyle("A6", "D" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "D");                                     //Autoajustar columnas
+            newSld.SetCellStyle("A6", chColumna.ToString() + dataCell.ToString(), estiloB);        //Asigno bordes al rango
+            newSld.AutoFitColumn("A", chColumna.ToString());                                     //Autoajustar columnas
+
+            return newSld;
+        }
+
+        //Reporte "Consolidado Conteo"                      --2/4   ◘◘◘◘
+        public void ExpConsolidadoNart()
+        {
+            SqlDataReader mdr = sqlDB.SqlCommand("rpt_consolidado_conteo", true);
+
+            if (!avisoSinDatos(mdr))
+            {
+                return;
+            }
+
+            SLDocument sl = new SLDocument();
+            sl = GenerarReporte(sl, mdr, "Consolidado conteo", "Consolidado");
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
@@ -212,100 +161,25 @@ namespace Inventario
             sl.SetCellValue("C" + (dataCell + 1), "TOTAL:");
             sl.SetCellValue("D" + (dataCell + 1), "=SUM(D7:D" + dataCell + ")");
 
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Consolidado_Conteo_" + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
+            string tmpFile = FilePath("Consolidado_Conteo_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
-            mysql.CloseConnection();
+            sqlDB.CloseConnection();
         }
 
         //Reporte "diferencia conteo vs foto cierre"        --3/5   ◘◘◘◘
         public void ExpConteoVsCierre()
         {
-            string selectQuery = "SELECT sb.codigo_prod, tbn.descripcion, SUM(CASE WHEN ci.cant_conteofinal >0 THEN ci.cant_conteofinal ELSE 0 END) as CantConteo, " +
-                "sb.cantidad as CantSaldo, (SUM(CASE WHEN ci.cant_conteofinal >0 THEN ci.cant_conteofinal ELSE 0 END))-sb.cantidad as Diferencia " +
-                "FROM tbsaldobodega sb INNER JOIN tbnart tbn ON sb.codigo_prod = tbn.codigo_prod " +
-                "INNER JOIN tbconteosinventario ci ON ci.codigo_prod = sb.codigo_prod GROUP BY sb.codigo_prod ORDER BY sb.codigo_prod;";
+            SqlDataReader mdr = sqlDB.SqlCommand("rpt_diferencia_conteo_cierre", true);
 
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
-
-            if (avisoSinDatos(mdr))
+            if (!avisoSinDatos(mdr))
             {
                 return;
             }
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
             SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", "Diferencia conteo vs foto cierre");
-
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
-            estiloC.Font.Bold = true;
-            sl.SetCellStyle("A4", estiloC);         //Imprime sin centrar
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
-
-            sl.MergeWorksheetCells("A1", "E1");      //Combino primeras celdas
-            sl.MergeWorksheetCells("A2", "E2");
-            sl.MergeWorksheetCells("A3", "E3");
-            sl.MergeWorksheetCells("A4", "B4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            sl.SetCellStyle("A6", "E6", estiloC);
-
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Diferencia");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nart");
-            sl.SetCellValue("B" + dataCell, "Descripción");
-            sl.SetCellValue("C" + dataCell, "Conteo final");
-            sl.SetCellValue("D" + dataCell, "Saldo bodega");
-            sl.SetCellValue("E" + dataCell, "Diferencia");
-
-            while (mdr.Read())       //Iteración - Lleno la tabla conlos datos del query
-            {
-                int dif = Convert.ToInt32(mdr["Diferencia"]);
-
-                if (dif != 0)
-                {
-                    dataCell++;
-                    sl.SetCellValue("A" + dataCell, mdr["codigo_prod"].ToString());
-                    sl.SetCellValue("B" + dataCell, mdr["descripcion"].ToString());
-
-                    int cConteo = Convert.ToInt32(mdr["CantConteo"]);
-                    int tnrConteo = cConteo == 0 ? -1 : cConteo;
-                    sl.SetCellValue("C" + dataCell, tnrConteo);
-
-                    sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["CantSaldo"]));
-
-                    int trnDiferencia = dif < 0 ? dif * -1 : dif;
-                    sl.SetCellValue("E" + dataCell, trnDiferencia);
-                    //= SI(C7 < 0; D7; (SI((D7 - C7) < 0; (D7 - C7) * -1; (D7 - C7))))
-                }
-            }
-
-            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            sl.SetCellStyle("A6", "E" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "E");                                     //Autoajustar columnas
+            sl = GenerarReporte(sl, mdr, "Diferencia conteo vs foto cierre", "Diferencia");
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
@@ -315,163 +189,66 @@ namespace Inventario
             number.FormatCode = "#,##0";
             sl.SetCellStyle("C7", "E" + (dataCell + 1).ToString(), number);
 
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Diferencia_conteo_vs_foto_cierre_" + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
+            string tmpFile = FilePath("Diferencia_conteo_vs_foto_cierre_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
-            mysql.CloseConnection();
+            sqlDB.CloseConnection();
         }
 
         //Reporte No digitados (Foto cierre/tarjetas)       --4-5/2 ◘◘◘◘
         public void ExpNoDigitados(int x)
         {
-            string Query = "";
-            string campo2 = "";
             string fileName = "Reporte No digitados";
             string sub = "Reporte No digitados";
+            string procedure = "rpt_digitados_no_cierre";
             if (x == 1)
             {
-                Query = "SELECT distinct codigo_prod, lote as campo2 FROM tbconteosinventario where codigo_prod not in (SELECT codigo_prod FROM tbnart);";
-                campo2 = "Lote";
                 fileName = "Narts_digitados_no_estan_en_cierre_";
                 sub = "Narts digitados que no están en foto cierre";
             }
             else if (x == 2)
             {
-                Query = "SELECT distinct codigo_prod, descripcion as campo2 FROM tbnart where codigo_prod not in (SELECT codigo_prod FROM tbconteosinventario);";
-                campo2 = "Descripción";
+                procedure = "rpt_cierre_no_digitados";
                 fileName = "Narts_foto_cierre_no_digitados_";
                 sub = "Narts foto cierre no digitados";
             }
 
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(Query, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
+            SqlDataReader mdr = sqlDB.SqlCommand(procedure, true);
 
-            if (avisoSinDatos(mdr))
+            if (!avisoSinDatos(mdr))
             {
                 return;
             }
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
             SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", sub);
-
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
-            estiloC.Font.Bold = true;
-            sl.SetCellStyle("A4", estiloC);         //Imprime sin centrar
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
-
-            sl.MergeWorksheetCells("A1", "D1");      //Combino primeras celdas
-            sl.MergeWorksheetCells("A2", "D2");
-            sl.MergeWorksheetCells("A3", "D3");
-            sl.MergeWorksheetCells("A4", "D" +
-                "4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            sl.SetCellStyle("A6", "B6", estiloC);
-
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "No digitados");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nart");
-            sl.SetCellValue("B" + dataCell, campo2);
-
-            while (mdr.Read())       //Lleno la tabla conlos datos del query
-            {
-                dataCell++;
-                sl.SetCellValue("A" + dataCell, mdr["codigo_prod"].ToString());
-                sl.SetCellValue("B" + dataCell, mdr["campo2"].ToString());
-            }
-
-            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            sl.SetCellStyle("A6", "B" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "B");                                     //Autoajustar columnas
+            sl = GenerarReporte(sl, mdr, sub, "No digitados");
 
             //SLStyle alignment = sl.CreateStyle();
             //alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
             //sl.SetCellStyle("G7", "B" + dataCell.ToString(), alignment);
 
-            string tmpFile = Path.Combine(Path.GetTempPath(), fileName + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
+            string tmpFile = FilePath(fileName + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
-            mysql.CloseConnection();
+            sqlDB.CloseConnection();
         }
 
         //Reporte Total conteo y foto cierre                --6
         public void ReporteTotales()
         {
-            string selectQuery = "SELECT sb.codigo_prod, tbn.descripcion, SUM(CASE WHEN ci.cant_conteofinal >0 THEN ci.cant_conteofinal ELSE 0 END) as CantConteo, " +
-                "sb.cantidad as CantSaldo FROM tbsaldobodega sb INNER JOIN tbnart tbn ON sb.codigo_prod = tbn.codigo_prod " +
-                "INNER JOIN tbconteosinventario ci ON ci.codigo_prod = sb.codigo_prod GROUP BY sb.codigo_prod ORDER BY sb.codigo_prod;";
+            SqlDataReader mdr = sqlDB.SqlCommand("rpt_total_conteo_cierre", true);
 
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
-
-            if (avisoSinDatos(mdr))
+            if (!avisoSinDatos(mdr))
             {
                 return;
             }
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
             SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", "Total conteo y foto cierre");
+            sl = GenerarReporte(sl, mdr, "Total conteo y foto cierre", "Totales");
 
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
-            estiloC.Font.Bold = true;
-            sl.SetCellStyle("A4", estiloC);         //Imprime sin centrar
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
-
-            sl.MergeWorksheetCells("A1", "D1");      //Combino primeras celdas
-            sl.MergeWorksheetCells("A2", "D2");
-            sl.MergeWorksheetCells("A3", "D3");
-            sl.MergeWorksheetCells("A4", "B4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            sl.SetCellStyle("A6", "D6", estiloC);
-
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Totales");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nart");
-            sl.SetCellValue("B" + dataCell, "Descripción");
-            sl.SetCellValue("C" + dataCell, "Conteo final");
-            sl.SetCellValue("D" + dataCell, "Saldo bodega");
-
+            /*
             int totalConteo = 0;
             int totalSaldo = 0;
 
@@ -488,22 +265,16 @@ namespace Inventario
 
                 sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["CantSaldo"]));
                 totalSaldo += Convert.ToInt32(mdr["CantSaldo"]);
-            }
+            }*/
 
             SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            sl.SetCellStyle("A6", "D" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "D");                                     //Autoajustar columnas
-
             dataCell++;
+
             sl.SetCellValue("B" + dataCell, "Total:");
-            sl.SetCellValue("C" + dataCell, totalConteo);
-            sl.SetCellValue("D" + dataCell, totalSaldo);
+            /*sl.SetCellValue("C" + dataCell, totalConteo);
+            sl.SetCellValue("D" + dataCell, totalSaldo);*/
+            sl.SetCellValue("C" + dataCell, "=+(C7:C" + (dataCell - 1) + ")");
+            sl.SetCellValue("D" + dataCell, "=+(D7:D" + (dataCell - 1) + ")");
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
@@ -517,91 +288,25 @@ namespace Inventario
             number.FormatCode = "#,##0";
             sl.SetCellStyle("C7", "D" + (dataCell + 1).ToString(), number);
 
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Total_conteo_y_foto_cierre_" + anio + ".xlsx");        //Dirección carpeta temporal + nombre archivo
-            sl.SaveAs(tmpFile);         //Guardo el archivoa
+            string tmpFile = FilePath("Total_conteo_y_foto_cierre_" + anio);
+            sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
 
-            mysql.CloseConnection();
+            sqlDB.CloseConnection();
         }
 
         //Reporte "Tarjetas que faltan por contar"          --7/7   ◘◘◘◘
         public void ExpTarjetasConteoFaltante()
         {
-            string selectQuery = "SELECT ci.numero_tarjeta, ci.codigo_prod, tbn.descripcion, ci.lote, ci.cant_conteo1, ci.cant_conteo2, ci.cant_conteo3 " +
-                    "FROM tbconteosinventario ci INNER JOIN tbnart tbn ON ci.codigo_prod = tbn.codigo_prod " +
-                    "WHERE ci.cant_conteo1 = -1 OR ci.cant_conteo2 = -1 ORDER BY ci.numero_tarjeta;";
-            // OR ci.cant_conteo3 = -1
-            mysql.OpenConnection();
-            MySqlCommand command = new MySqlCommand(selectQuery, mysql.connectionString);
-            MySqlDataReader mdr = command.ExecuteReader();
+            SqlDataReader mdr = sqlDB.SqlCommand("rpt_tarjetas_sin_contar", true);
 
-            if (avisoSinDatos(mdr))
+            if (!avisoSinDatos(mdr))
             {
                 return;
             }
 
-            int dataCell = 6;
-            var anio = DateTime.Now.ToString("yyyy");
-            var fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
             SLDocument sl = new SLDocument();
-            sl.SetCellValue("A1", "BSN Medical LTDA");
-            sl.SetCellValue("A2", "Inventario " + anio);
-            sl.SetCellValue("A3", fecha);
-            sl.SetCellValue("A4", "Tarjetas con conteo faltante");
-
-            SLStyle estiloT = sl.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = sl.CreateStyle();     //Estilo cabeceras
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-            estiloC.Font.Bold = true;
-
-            sl.SetCellStyle("A1", estiloT);
-            sl.SetCellStyle("A2", estiloC);
-            sl.SetCellStyle("A3", estiloC);
-            sl.SetCellStyle("A4", estiloC);
-
-            sl.MergeWorksheetCells("A1", "G1");      //Combino priimeras celdas
-            sl.MergeWorksheetCells("A2", "G2");
-            sl.MergeWorksheetCells("A3", "G3");
-            sl.MergeWorksheetCells("A4", "B4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);
-            sl.SetCellStyle("A6", "G6", estiloC);
-
-            sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "Faltantes");      //Nombre de la hoja
-            sl.SetCellValue("A" + dataCell, "Nro. Tarjeta");
-            sl.SetCellValue("B" + dataCell, "Nart");
-            sl.SetCellValue("C" + dataCell, "Descripción");
-            sl.SetCellValue("D" + dataCell, "Lote");
-            sl.SetCellValue("E" + dataCell, "Conteo 1");
-            sl.SetCellValue("F" + dataCell, "Conteo 2");
-            sl.SetCellValue("G" + dataCell, "Conteo 3");
-
-            while (mdr.Read())       //Lleno la tabla conlos datos del query
-            {
-                dataCell++;
-                sl.SetCellValue("A" + dataCell, Convert.ToInt32(mdr["numero_tarjeta"]));
-                sl.SetCellValue("B" + dataCell, mdr["codigo_prod"].ToString());
-                sl.SetCellValue("C" + dataCell, mdr["descripcion"].ToString());
-                sl.SetCellValue("D" + dataCell, Convert.ToInt32(mdr["lote"]));
-                sl.SetCellValue("E" + dataCell, Convert.ToInt32(mdr["cant_conteo1"]));
-                sl.SetCellValue("F" + dataCell, Convert.ToInt32(mdr["cant_conteo2"]));
-                sl.SetCellValue("G" + dataCell, Convert.ToInt32(mdr["cant_conteo3"]));
-            }
-
-            SLStyle estiloB = sl.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            sl.SetCellStyle("A6", "G" + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            sl.AutoFitColumn("A", "G");                                     //Autoajustar columnas
+            sl = GenerarReporte(sl, mdr, "Tarjetas con conteo faltante", "Faltantes");
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Center;
@@ -609,22 +314,25 @@ namespace Inventario
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
             sl.SetCellStyle("G7", "G" + dataCell.ToString(), alignment);
 
-            string path = Path.GetTempPath();                                                   //Para sacar la dirección de la carpeta temporal
-            string tmpFile = Path.Combine(Path.GetTempPath(), "Tarjetas_conteo_faltante_" + anio + ".xlsx");        //Junta dirección con nombre de archivo
+            string tmpFile = FilePath("Tarjetas_conteo_faltante_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
-            mysql.CloseConnection();
+
+            sqlDB.CloseConnection();
         }
 
-        private bool avisoSinDatos(MySqlDataReader mdr)
+        private bool avisoSinDatos(SqlDataReader mdr)
         {
-            if (!mdr.HasRows)
+            if (mdr.HasRows)
+            {
+                return true;
+            }
+            else
             {
                 MessageBox.Show("No se encontró información.", "Aviso",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                return true;
+                return false;
             }
-            return false;
         }
     }
 }

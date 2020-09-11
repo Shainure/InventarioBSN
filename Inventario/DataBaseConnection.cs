@@ -3,148 +3,126 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MySql;
-using MySql.Data.MySqlClient;
 using System.Data;
 using System.Reflection;
+
 using SQL = System.Data;
+
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace Inventario
 {
-    class DataBaseConnection
+    internal class DataBaseConnection
     {
-        public MySqlConnection connectionString = new MySqlConnection("server=localhost;user id=root;Pwd=root;database=dbi");
-        MySqlCommand command;
-        //127.0.0.1
-        //public MySqlConnection connectionString = new MySqlConnection("server=localhost;user id=root;Pwd=root;database=dbi");
+        private static SqlConnection connection = new SqlConnection(@"Data Source=TEST\SQLEXPRESS;Initial Catalog = DBI; Persist Security Info=True;User ID = TestLogin; Password=12345");
 
-
-        public void OpenConnection()
+        public SqlDataReader SqlCommand(string queryString, bool procedure)
         {
-            connectionString.Open();
-        }
-        public void CloseConnection()
-        {
-            connectionString.Close();
-        }
+            SqlCommand cmd = new SqlCommand(queryString, connection);
+            if (procedure) { cmd.CommandType = CommandType.StoredProcedure; }
 
-        
-        public SQL.DataTable leerTbConteos(int numTarjeta)
-        {
-            SQL.DataTable dt = new SQL.DataTable();
-            MySqlDataAdapter da = new MySqlDataAdapter("Select * from tbsaldobodega;", connectionString);
-            da.Fill(dt);
-            return dt;
-        }
+            try
+            {
+                cmd.Connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
 
-
-        //Trae los valores de tbConteosInventarios y tbNart para poner en el cuadro de la interfaz
-        public MySqlDataReader QueryInfo(int numTarjeta)
-        {
-            MySqlDataReader mdr = null;
-            string selectQuery = "SELECT ci.codigo_prod, tbn.descripcion, ci.lote, ci.bodega, ci.ubicacion FROM tbconteosinventario ci " +
-                "INNER JOIN tbnart tbn ON ci.codigo_prod = tbn.codigo_prod WHERE numero_tarjeta=" + numTarjeta;
-            connectionString.Open();
-            command = new MySqlCommand(selectQuery, connectionString);
-            mdr = command.ExecuteReader();
-            //connectionString.Close();
-            return mdr;
-        }
-
-
-        //Comprueba si ya hubo un conteo
-        public MySqlDataReader QueryConteo(int numTarjeta, int numConteo)
-        {
-            MySqlDataReader mdr;
-            string selectQuery = "select cant_conteo"+ numConteo + " from tbconteosinventario where numero_tarjeta=" + numTarjeta;
-            connectionString.Open();
-            command = new MySqlCommand(selectQuery, connectionString);
-            mdr = command.ExecuteReader();
-            //connectionString.Close();
-            return mdr;            
+                return reader;
+            }
+            catch (SqlException ex)
+            {
+                StringBuilder errorMessages = new StringBuilder();
+                for (int i = 0; i < ex.Errors.Count; i++)
+                {
+                    errorMessages.Append("Index #" + i + "\n" +
+                        "Código error: " + ex.Errors[i].Number + "\n" +
+                        "Mensaje: " + ex.Errors[i].Message + "\n" +
+                        "Server: " + ex.Errors[i].Server + "\n" +
+                        "Procedure: " + ex.Errors[i].Procedure + "\n" +
+                        "Source: " + ex.Errors[i].Source + "\n");
+                }
+                MessageBox.Show(Convert.ToString(errorMessages), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
         }
 
         public int ConsolidarConteo()
         {
             int filas = 0;
-            MySqlDataReader mdr;
-            string selectQuery = "select * from tbconteosinventario where estado=1";
-            connectionString.Open();
-            command = new MySqlCommand(selectQuery, connectionString);
-            mdr = command.ExecuteReader();
+            string selectQuery = "SELECT * FROM tbconteosinventario WHERE estado=1";
             string updateQuery = "";
 
-            while (mdr.Read())
+            SqlDataReader sdr = SqlCommand(selectQuery, false);
+
+            using (SqlCommand cmd = new SqlCommand(selectQuery, connection))
             {
-                if (mdr.GetInt32("cant_conteo1") == mdr.GetInt32("cant_conteo2"))
+                try
                 {
-                    filas++;
-                    updateQuery += "UPDATE tbconteosinventario SET cant_conteofinal =cant_conteo2 WHERE numero_tarjeta=" + mdr.GetString(0)+";\n";
+                    while (sdr.Read())
+                    {
+                        if (Convert.ToInt32(sdr["cant_conteo1"]) == Convert.ToInt32(sdr["cant_conteo2"]))
+                        {
+                            filas++;
+                            updateQuery += "UPDATE tbconteosinventario SET cant_conteofinal =cant_conteo2 WHERE numero_tarjeta=" + sdr.GetValue(0).ToString() + ";\n";
+                        }
+                        else
+                        {
+                            filas++;
+                            updateQuery += "UPDATE tbconteosinventario SET cant_conteofinal =cant_conteo3 WHERE numero_tarjeta=" + sdr.GetValue(0).ToString() + ";\n";
+                        }
+                    }
+                    CloseConnection();
+
+                    using (SqlCommand comd = connection.CreateCommand())
+                    {
+                        comd.CommandText = updateQuery;
+                        connection.Open();
+                        comd.ExecuteNonQuery();
+                        connection.Close();
+                    }
                 }
-                else
+                catch (SqlException ex)
                 {
-                    filas++;
-                    updateQuery += "UPDATE tbconteosinventario SET cant_conteofinal =cant_conteo3 WHERE numero_tarjeta=" + mdr.GetString(0) + ";\n";
+                    StringBuilder errorMessages = new StringBuilder();
+                    for (int i = 0; i < ex.Errors.Count; i++)
+                    {
+                        errorMessages.Append("Index #" + i + "\n" +
+                            "Código error: " + ex.Errors[i].Number + "\n" +
+                            "Mensaje: " + ex.Errors[i].Message + "\n" +
+                            "Server: " + ex.Errors[i].Server + "\n" +
+                            "Procedure: " + ex.Errors[i].Procedure + "\n" +
+                            "Source: " + ex.Errors[i].Source + "\n");
+                    }
+                    MessageBox.Show(Convert.ToString(errorMessages), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            connectionString.Close();
-
-            connectionString.Open();
-            command = new MySqlCommand(updateQuery, connectionString);
-            mdr = command.ExecuteReader();
-            connectionString.Close();
-
             return filas;
         }
-
-        //Guarda el registro
-        public bool GrabarConteo(string tarjeta, string conteo, string total)
-        {
-            bool result = false;
-            try
-            {
-                MySqlDataReader mdr;               
-                string updateQuery = "UPDATE tbconteosinventario SET cant_conteo"+conteo+" = "+total+", estado=1 WHERE numero_tarjeta=" + tarjeta;
-                connectionString.Open();
-                command = new MySqlCommand(updateQuery, connectionString);
-                mdr = command.ExecuteReader();
-                connectionString.Close();
-                result = true;
-            }
-            catch
-            {
-                result = false;
-            }
-            return result;
-        }
-
 
         public bool TercerConteo(string tarjeta)
         {
             bool result = false;
             try
             {
-                MySqlDataReader mdr;
                 //Compara conteos
                 string selectQuery = "select cant_conteo1, cant_conteo2, cant_conteo3 from tbconteosinventario where numero_tarjeta=" + tarjeta;
-                connectionString.Open();
-                command = new MySqlCommand(selectQuery, connectionString);
-                mdr = command.ExecuteReader();
+
+                SqlDataReader mdr = SqlCommand(selectQuery, false);
                 if (mdr.Read())
                 {
-                    if(mdr.GetInt32("cant_conteo1") == -1 || mdr.GetInt32("cant_conteo2") == -1)
+                    if (Convert.ToInt32(mdr["cant_conteo1"]) == -1 || Convert.ToInt32(mdr["cant_conteo2"]) == -1)
                     {
                         result = false;
                     }
-                    else if (mdr.GetInt32("cant_conteo1")!= mdr.GetInt32("cant_conteo2"))
+                    else if (Convert.ToInt32(mdr["cant_conteo1"]) != Convert.ToInt32(mdr["cant_conteo2"]))
                     {
-                        if(mdr.GetInt32("cant_conteo3")==-1)
+                        if (Convert.ToInt32(mdr["cant_conteo3"]) == -1)
                         {
                             result = true;
                         }
                     }
                 }
-                connectionString.Close();
+                connection.Close();
             }
             catch
             {
@@ -158,16 +136,36 @@ namespace Inventario
             bool result = false;
             try
             {
-                connectionString.Open();
+                connection.Open();
                 result = true;
-                connectionString.Close();
+                connection.Close();
             }
-            catch
+            catch (SqlException ex)
             {
+                StringBuilder errorMessages = new StringBuilder();
+                for (int i = 0; i < ex.Errors.Count; i++)
+                {
+                    errorMessages.Append("Index #" + i + "\n" +
+                        "Código error: " + ex.Errors[i].Number + "\n" +
+                        "Mensaje: " + ex.Errors[i].Message + "\n" +
+                        "Server: " + ex.Errors[i].Server + "\n" +
+                        "Procedure: " + ex.Errors[i].Procedure + "\n" +
+                        "Source: " + ex.Errors[i].Source + "\n");
+                }
+                MessageBox.Show(Convert.ToString(errorMessages), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 result = false;
             }
             return result;
         }
 
+        public void OpenConnection()
+        {
+            connection.Open();
+        }
+
+        public void CloseConnection()
+        {
+            connection.Close();
+        }
     }
 }
