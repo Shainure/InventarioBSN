@@ -1,0 +1,22 @@
+// 1	Reporte "tarjetas conteo"
+rpt_tarjetas_conteo
+
+// 2	Reporte "Consolidado Conteo"  
+rpt_consolidado_conteo
+
+// 3	Reporte "diferencia conteo vs foto cierre" 
+rpt_diferencia_conteo_cierre
+
+// 4-5	Reporte No digitados (Foto cierre/tarjetas)
+rpt_digitados_no_cierre		--Reportes digitados que no están en foto cierre
+rpt_cierre_no_digitados		--Narts foto cierre no digitados
+
+// 6	Reporte Total conteo y foto cierre 
+rpt_total_conteo_cierre
+
+// 7	Reporte "Tarjetas que faltan por contar"
+rpt_tarjetas_sin_contar
+
+
+// Información de la tarjeta (Panel derecho del menú principal)
+inf_tarjeta
