@@ -58,7 +58,7 @@ namespace Inventario
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.pnTabla = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
             this.tbUbic = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -78,7 +78,7 @@ namespace Inventario
             this.button1 = new System.Windows.Forms.Button();
             this.Conteo.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.pnTabla.SuspendLayout();
             this.SuspendLayout();
             // 
             // titulo
@@ -395,24 +395,24 @@ namespace Inventario
             this.panel1.Size = new System.Drawing.Size(441, 70);
             this.panel1.TabIndex = 1;
             // 
-            // panel2
+            // pnTabla
             // 
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.label9);
-            this.panel2.Controls.Add(this.tbUbic);
-            this.panel2.Controls.Add(this.label12);
-            this.panel2.Controls.Add(this.tbLote);
-            this.panel2.Controls.Add(this.tbBodega);
-            this.panel2.Controls.Add(this.label10);
-            this.panel2.Controls.Add(this.tbDesc);
-            this.panel2.Controls.Add(this.label8);
-            this.panel2.Controls.Add(this.tbNart);
-            this.panel2.Controls.Add(this.label7);
-            this.panel2.Location = new System.Drawing.Point(459, 145);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(441, 229);
-            this.panel2.TabIndex = 3;
+            this.pnTabla.BackColor = System.Drawing.Color.Transparent;
+            this.pnTabla.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnTabla.Controls.Add(this.label9);
+            this.pnTabla.Controls.Add(this.tbUbic);
+            this.pnTabla.Controls.Add(this.label12);
+            this.pnTabla.Controls.Add(this.tbLote);
+            this.pnTabla.Controls.Add(this.tbBodega);
+            this.pnTabla.Controls.Add(this.label10);
+            this.pnTabla.Controls.Add(this.tbDesc);
+            this.pnTabla.Controls.Add(this.label8);
+            this.pnTabla.Controls.Add(this.tbNart);
+            this.pnTabla.Controls.Add(this.label7);
+            this.pnTabla.Location = new System.Drawing.Point(459, 145);
+            this.pnTabla.Name = "pnTabla";
+            this.pnTabla.Size = new System.Drawing.Size(441, 229);
+            this.pnTabla.TabIndex = 3;
             // 
             // label9
             // 
@@ -613,7 +613,7 @@ namespace Inventario
             this.Controls.Add(this.btnReportes);
             this.Controls.Add(this.btnConsolidar);
             this.Controls.Add(this.btnGrabar);
-            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.pnTabla);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Conteo);
             this.Controls.Add(this.titulo);
@@ -629,8 +629,8 @@ namespace Inventario
             this.Conteo.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.pnTabla.ResumeLayout(false);
+            this.pnTabla.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -666,7 +666,7 @@ namespace Inventario
         private System.Windows.Forms.TextBox tb23;
         private System.Windows.Forms.TextBox tb22;
         private System.Windows.Forms.TextBox tb21;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel pnTabla;
         private System.Windows.Forms.TextBox tbUbic;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbLote;

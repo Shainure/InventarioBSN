@@ -2,16 +2,14 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.EMMA;
+
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.Remoting.Messaging;
 using Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 
 namespace Inventario
 {
@@ -23,19 +21,9 @@ namespace Inventario
         private int dataCell = 6;
         private char chColumna = 'A';
 
-        private string FilePath(string fileName)
-        {
-            string tmpFile = Path.Combine(Path.GetTempPath(), fileName);
-            string aux = tmpFile;
-            int x = 1;
-            while (File.Exists(tmpFile + ".xlsx"))
-            {
-                tmpFile = aux + "_(" + x + ")";
-                x++;
-            }
-            tmpFile += ".xlsx";
-            return tmpFile;
-        }
+        private CultureInfo ci = CultureInfo.CurrentUICulture; //Para sacar el idioma de windows 
+
+
 
         // Reporte "tarjetas conteo"                        --1/9   ◘◘◘◘
         public void ExpTarjetasConteos()
@@ -43,9 +31,7 @@ namespace Inventario
             SqlDataReader mdr = sqlDB.SqlCommand("rpt_tarjetas_conteo", true);
 
             if (!avisoSinDatos(mdr))
-            {
                 return;
-            }
 
             SLDocument sl = new SLDocument();
             sl = GenerarReporte(sl, mdr, "Tarjetas conteo", "Tarjetas");
@@ -63,78 +49,7 @@ namespace Inventario
             sqlDB.CloseConnection();
         }
 
-        private SLDocument GenerarReporte(SLDocument sld, SqlDataReader reader, string subTitulo, string nomPag)
-        {
-            dataCell = 6;
-            int numColumna = reader.FieldCount;                         //Número de columnas
-            chColumna = (char)(64 + reader.FieldCount);            //Número de columnas  max en letra (para excel)
 
-            SqlDataReader rdr = reader;
-            var table = rdr.GetSchemaTable();       //Obtengo nombre de columnas
-            SLDocument newSld = sld;
-
-            newSld.SetCellValue("A1", "BSN Medical LTDA");
-            newSld.SetCellValue("A2", "Inventario " + anio);
-            newSld.SetCellValue("A3", fecha);
-            newSld.SetCellValue("A4", subTitulo);
-
-            SLStyle estiloT = newSld.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = newSld.CreateStyle();     //Estilo cabeceras
-            estiloC.Font.Bold = true;
-            newSld.SetCellStyle("A4", estiloC);         //Imprime sin centrar
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            newSld.SetCellStyle("A1", estiloT);
-            newSld.SetCellStyle("A2", estiloC);
-            newSld.SetCellStyle("A3", estiloC);
-
-            newSld.MergeWorksheetCells("A1", chColumna + "1");      //Combino primeras celdas
-            newSld.MergeWorksheetCells("A2", chColumna + "2");
-            newSld.MergeWorksheetCells("A3", chColumna + "3");
-            newSld.MergeWorksheetCells("A4", chColumna + "4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            newSld.SetCellStyle("A6", chColumna + "6", estiloC);
-
-            newSld.RenameWorksheet(SLDocument.DefaultFirstSheetName, nomPag);      //Nombre de la hoja
-
-            int letraCol = 65; //Letra de columna (convierto a char luego)
-
-            var result = new List<string>();
-            foreach (DataRow row in table.Rows)                                 //Lleno nombre de columnas
-            {
-                newSld.SetCellValue((char)letraCol + dataCell.ToString(), row.Field<string>("ColumnName"));
-
-                letraCol++;
-            }
-
-            while (rdr.Read())       //Lleno la tabla conlos datos del query
-            {
-                dataCell++;
-                letraCol = 65;
-                for (int i = 0; i < numColumna; i++)
-                {
-                    newSld.SetCellValue((char)letraCol + dataCell.ToString(), rdr.GetValue(i).ToString());
-                    letraCol++;
-                }
-            }
-
-            SLStyle estiloB = newSld.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
-
-            newSld.SetCellStyle("A6", chColumna.ToString() + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            newSld.AutoFitColumn("A", chColumna.ToString());                                     //Autoajustar columnas
-
-            return newSld;
-        }
 
         //Reporte "Consolidado Conteo"                      --2/4   ◘◘◘◘
         public void ExpConsolidadoNart()
@@ -159,7 +74,21 @@ namespace Inventario
 
             //Suma de conteo Dx
             sl.SetCellValue("C" + (dataCell + 1), "TOTAL:");
-            sl.SetCellValue("D" + (dataCell + 1), "=SUM(D7:D" + dataCell + ")");
+
+            if (ci.Name.Contains("es"))     //Windows en español
+            {
+                sl.SetCellValue("D" + (dataCell + 1), "=SUMA(D7:D" + dataCell + ")");
+            }
+            else if (ci.Name.Contains("en"))//Windows en inglés
+            {
+                sl.SetCellValue("D" + (dataCell + 1), "=SUM(D7:D" + dataCell + ")");
+            }
+            else        //Otro idioma (por si aca)
+            {
+                sl.SetCellValue("D" + (dataCell + 1), "+(D7:D" + dataCell + ")");
+            }
+
+
 
             string tmpFile = FilePath("Consolidado_Conteo_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
@@ -189,6 +118,29 @@ namespace Inventario
             number.FormatCode = "#,##0";
             sl.SetCellStyle("C7", "E" + (dataCell + 1).ToString(), number);
 
+            //Suma de conteo Dx
+            sl.SetCellValue("B" + (dataCell + 1), "TOTAL:");
+
+            if (ci.Name.Contains("es"))     //Windows en español
+            {
+                sl.SetCellValue("C" + (dataCell + 1), "=SUMA(C7:C" + dataCell + ")");
+                sl.SetCellValue("D" + (dataCell + 1), "=SUMA(D7:D" + dataCell + ")");
+                sl.SetCellValue("E" + (dataCell + 1), "=SUMA(E7:E" + dataCell + ")");
+            }
+            else if (ci.Name.Contains("en"))//Windows en inglés
+            {
+                sl.SetCellValue("C" + (dataCell + 1), "=SUM(C7:C" + dataCell + ")");
+                sl.SetCellValue("D" + (dataCell + 1), "=SUM(D7:D" + dataCell + ")");
+                sl.SetCellValue("E" + (dataCell + 1), "=SUM(E7:E" + dataCell + ")");
+            }
+            else        //Otro idioma (por si aca)
+            {
+                sl.SetCellValue("C" + (dataCell + 1), "+(C7:C" + dataCell + ")");
+                sl.SetCellValue("D" + (dataCell + 1), "+(D7:D" + dataCell + ")");
+                sl.SetCellValue("E" + (dataCell + 1), "+(E7:E" + dataCell + ")");
+            }
+
+
             string tmpFile = FilePath("Diferencia_conteo_vs_foto_cierre_" + anio);
             sl.SaveAs(tmpFile);         //Guardo el archivo
             System.Diagnostics.Process.Start(tmpFile);
@@ -217,9 +169,7 @@ namespace Inventario
             SqlDataReader mdr = sqlDB.SqlCommand(procedure, true);
 
             if (!avisoSinDatos(mdr))
-            {
                 return;
-            }
 
             SLDocument sl = new SLDocument();
             sl = GenerarReporte(sl, mdr, sub, "No digitados");
@@ -273,8 +223,25 @@ namespace Inventario
             sl.SetCellValue("B" + dataCell, "Total:");
             /*sl.SetCellValue("C" + dataCell, totalConteo);
             sl.SetCellValue("D" + dataCell, totalSaldo);*/
-            sl.SetCellValue("C" + dataCell, "=+(C7:C" + (dataCell - 1) + ")");
-            sl.SetCellValue("D" + dataCell, "=+(D7:D" + (dataCell - 1) + ")");
+
+
+
+            if (ci.Name.Contains("es"))     //Windows en español
+            {
+                sl.SetCellValue("C" + dataCell, "=SUMA(C7:C" + (dataCell - 1) + ")");
+                sl.SetCellValue("D" + dataCell, "=SUMA(D7:D" + (dataCell - 1) + ")");
+            }
+            else if (ci.Name.Contains("en"))//Windows en inglés
+            {
+                sl.SetCellValue("C" + dataCell, "=SUM(C7:C" + (dataCell - 1) + ")");
+                sl.SetCellValue("D" + dataCell, "=SUM(D7:D" + (dataCell - 1) + ")");
+            }
+            else        //Otro idioma (por si aca)
+            {
+                sl.SetCellValue("C" + dataCell, "=+(C7:C" + (dataCell - 1) + ")");
+                sl.SetCellValue("D" + dataCell, "=+(D7:D" + (dataCell - 1) + ")");
+            }
+
 
             SLStyle alignment = sl.CreateStyle();
             alignment.Alignment.Horizontal = HorizontalAlignmentValues.Right;
@@ -301,9 +268,7 @@ namespace Inventario
             SqlDataReader mdr = sqlDB.SqlCommand("rpt_tarjetas_sin_contar", true);
 
             if (!avisoSinDatos(mdr))
-            {
                 return;
-            }
 
             SLDocument sl = new SLDocument();
             sl = GenerarReporte(sl, mdr, "Tarjetas con conteo faltante", "Faltantes");
@@ -321,18 +286,127 @@ namespace Inventario
             sqlDB.CloseConnection();
         }
 
+        private SLDocument GenerarReporte(SLDocument sld, SqlDataReader reader, string subTitulo, string nomPag)
+        {
+            dataCell = 6;
+            int numColumna = reader.FieldCount;                         //Número de columnas
+            chColumna = (char)(64 + reader.FieldCount);            //Número de columnas max en letra (para excel)
+
+            SqlDataReader rdr = reader;
+            var table = rdr.GetSchemaTable();       //Obtengo nombre de columnas
+            SLDocument newSld = sld;
+
+            newSld.SetCellValue("A1", "BSN Medical LTDA");
+            newSld.SetCellValue("A2", "Inventario " + anio);
+            newSld.SetCellValue("A3", fecha);
+            newSld.SetCellValue("A4", subTitulo);
+
+            SLStyle estiloT = newSld.CreateStyle();     //Estilo título
+            estiloT.Font.FontSize = 16;
+            estiloT.Font.Bold = true;
+            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            SLStyle estiloC = newSld.CreateStyle();     //Estilo cabeceras
+            estiloC.Font.Bold = true;
+            newSld.SetCellStyle("A4", estiloC);         //Imprime sin centrar
+            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            newSld.SetCellStyle("A1", estiloT);
+            newSld.SetCellStyle("A2", estiloC);
+            newSld.SetCellStyle("A3", estiloC);
+
+            newSld.MergeWorksheetCells("A1", chColumna + "1");      //Combino primeras celdas
+            newSld.MergeWorksheetCells("A2", chColumna + "2");
+            newSld.MergeWorksheetCells("A3", chColumna + "3");
+            newSld.MergeWorksheetCells("A4", chColumna + "4");
+
+            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
+            newSld.SetCellStyle("A6", chColumna + "6", estiloC);
+
+            newSld.RenameWorksheet(SLDocument.DefaultFirstSheetName, nomPag);      //Nombre de la hoja
+
+            int letraCol = 65; //Letra de columna (convierto a char luego)
+
+            foreach (DataRow row in table.Rows)                                 //Lleno nombre de columnas
+            {
+                newSld.SetCellValue((char)letraCol + dataCell.ToString(), row.Field<string>("ColumnName"));
+
+                letraCol++;
+            }
+
+
+            var tipos = new List<string>();
+            int j = 0;
+
+            while (rdr.Read())       //Lleno la tabla conlos datos del query
+            {
+                dataCell++;
+                letraCol = 65;
+                for (int i = 0; i < numColumna; i++)
+                {
+                    // newSld = new archivo de excel
+                    if (rdr.GetFieldType(i).ToString() == "System.String")
+                        newSld.SetCellValue((char)letraCol + dataCell.ToString(), "'"+rdr.GetValue(i).ToString());
+                    else
+                    {
+                        int value = Convert.ToInt32(rdr.GetValue(i));
+                        if (value < 0)
+                            value *= -1;
+                        newSld.SetCellValue((char)letraCol + dataCell.ToString(), value);
+                    }
+                    letraCol++;
+                }
+                //Guardo los tipos de columnas solo 1 vez
+                while (j < numColumna)
+                {
+                    tipos.Add(rdr.GetFieldType(j).ToString());
+                    j++;
+                }
+
+            }
+            SLStyle estiloB = newSld.CreateStyle(); //Creo estilo para bordes
+            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
+            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
+            //estiloB.Alignment.Horizontal(Right);
+
+            newSld.SetCellStyle("A6", chColumna.ToString() + dataCell.ToString(), estiloB);        //Asigno bordes al rango
+            newSld.AutoFitColumn("A", chColumna.ToString());                                     //Autoajustar columnas
+
+            return newSld;
+        }
+
+
+        #region -> internal methods
+        // Aviso, no se encontraron datos para generar el reporte
         private bool avisoSinDatos(SqlDataReader mdr)
         {
             if (mdr.HasRows)
-            {
                 return true;
-            }
             else
             {
-                MessageBox.Show("No se encontró información.", "Aviso",
+                MessageBox.Show("No se encontró información para generar el reporte.", "Inventario BSN",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                sqlDB.CloseConnection();
                 return false;
             }
         }
+
+        private string FilePath(string fileName)
+        {
+            string tmpFile = Path.Combine(Path.GetTempPath(), fileName);
+            string aux = tmpFile;
+            int x = 1;
+            while (File.Exists(tmpFile + ".xlsx"))
+            {
+                tmpFile = aux + "_(" + x + ")";
+                x++;
+            }
+            tmpFile += ".xlsx";
+            return tmpFile;
+        }
+
+        #endregion
     }
 }

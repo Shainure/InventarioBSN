@@ -77,7 +77,7 @@ namespace Inventario
             {
                 if (String.IsNullOrEmpty(tbTarjeta.Text))
                 {
-                    MessageBox.Show("Debe ingresar el número de tarjeta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Debe ingresar el número de tarjeta.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tbTarjeta.Focus();
                 }
                 else
@@ -100,7 +100,7 @@ namespace Inventario
                     }
                     else
                     {
-                        MessageBox.Show("¡Tarjeta no encontrada!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("¡Tarjeta no encontrada!", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     db.CloseConnection();
                 }
@@ -113,7 +113,7 @@ namespace Inventario
             {
                 if (String.IsNullOrEmpty(tbTarjeta.Text) || String.IsNullOrEmpty(tbConteo.Text))
                 {
-                    MessageBox.Show("Debe ingresar el número de tarjeta y conteo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Debe ingresar el número de tarjeta y conteo.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tbConteo.Focus();
                 }
                 else
@@ -127,13 +127,14 @@ namespace Inventario
                         string aux = "cant_conteo" + tbConteo.Text;     //Para sacar el número de conteo
                         if (Convert.ToInt32(reader[aux]) != -1)
                         {
-                            MessageBox.Show("Esta tarjeta ya fue grabada.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show("Esta tarjeta ya fue grabada.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
+                        ActivarCampos();
                         SendKeys.Send("{TAB}");
                     }
                     else
                     {
-                        MessageBox.Show("Error en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Error en la base de datos.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     db.CloseConnection();
                 }
@@ -142,29 +143,36 @@ namespace Inventario
 
         private void btnGrabar_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("¿Desea guardar el registro?", "Aviso",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes)
+            if (String.IsNullOrEmpty(tbTarjeta.Text) || String.IsNullOrEmpty(tbConteo.Text) || String.IsNullOrEmpty(tbTotal.Text) || int.Parse(tbTotal.Text) <= 0)
             {
-                if (String.IsNullOrEmpty(tbTarjeta.Text) || String.IsNullOrEmpty(tbConteo.Text) || String.IsNullOrEmpty(tbTotal.Text) || int.Parse(tbTotal.Text) == 0)
-                {
-                    MessageBox.Show("Datos incompletos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
+                MessageBox.Show("Datos incompletos.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                if (MessageBox.Show("¿Desea guardar el registro?", "Inventario BSN",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes)
                 {
                     DataBaseConnection db = new DataBaseConnection();
-                    string updateQuery = "UPDATE tbconteosinventario SET cant_conteo" + tbConteo.Text + " = " + tbTotal.Text + ", estado=1 WHERE numero_tarjeta=" + tbTarjeta.Text;
-
+                    string updateQuery = String.Format("UPDATE tbconteosinventario SET cant_conteo{0} = {1}, estado=1 WHERE numero_tarjeta={2};",
+                        tbConteo.Text, tbTotal.Text, tbTarjeta.Text);
                     try
                     {
-                        SqlDataReader reader = db.SqlCommand(updateQuery, false);
-                        db.CloseConnection();
-                        MessageBox.Show("La tarjeta #" + (tbTarjeta.Text) + " requiere tercer conteo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        int resultado = db.SqlUpdate(updateQuery);
+
+                        if (resultado != 1)
+                            MessageBox.Show("No se guardaron los cambios. Resultado del query:" + resultado);
+                        else
+                        {
+                            if (db.TercerConteo(tbTarjeta.Text))
+                                MessageBox.Show("La tarjeta #" + (tbTarjeta.Text) + " requiere tercer conteo.", "Inventario BSN",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                         limpiar();
                     }
                     catch
                     {
-                        MessageBox.Show("No se pudo guardar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("No se pudo guardar.", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -172,30 +180,28 @@ namespace Inventario
 
         private void limpiar()
         {
-            tbTarjeta.Text = "";
-            tbConteo.Text = "";
-            tb11.Text = "";
-            tb12.Text = "";
-            tb13.Text = "";
-            tb21.Text = "";
-            tb22.Text = "";
-            tb23.Text = "";
-            tb31.Text = "";
-            tb32.Text = "";
-            tb33.Text = "";
-            tb41.Text = "";
-            tb42.Text = "";
-            tb43.Text = "";
-            tb51.Text = "";
-            tb52.Text = "";
-            tb53.Text = "";
-            tbNart.Text = "";
-            tbDesc.Text = "";
-            tbLote.Text = "";
-            tbBodega.Text = "";
-            tbUbic.Text = "";
-            tbTotal.Text = "";
+            //Borro el contenido de todos los textbox
+            tbTarjeta.Text = String.Empty;
+            tbConteo.Text = String.Empty;
+
+            foreach (var c in Conteo.Controls)
+                if (c is TextBox)
+                {
+                    ((TextBox)c).Text = String.Empty;
+                    ((TextBox)c).Enabled = false;
+                }
+
+            foreach (var c in pnTabla.Controls)
+                if (c is TextBox) ((TextBox)c).Text = String.Empty;
+
             tbConteo.Enabled = false;
+        }
+
+        private void ActivarCampos()
+        {
+            foreach (var c in Conteo.Controls)
+                if (c is TextBox)
+                    ((TextBox)c).Enabled = true;
         }
 
         private void btnCerrar_Click(object sender, EventArgs e)
@@ -208,13 +214,9 @@ namespace Inventario
             DataBaseConnection db = new DataBaseConnection();
 
             if (db.CheckConnection())
-            {
-                MessageBox.Show("¡Funcionó esta cosa!", "Conexión exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+                MessageBox.Show("Conexión exitosa\n¡Funcionó esta cosa!", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-            {
-                MessageBox.Show("¡Explotó esta vaina!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                MessageBox.Show("Error. \n¡Explotó esta vaina! \n\nCulpa de Daniela", "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -225,13 +227,13 @@ namespace Inventario
 
         private void btnConsolidar_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("¿Desea consolidar los registros?", "Confirmación",
+            if (MessageBox.Show("¿Desea consolidar los registros?", "Inventario BSN",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes)
             {
                 DataBaseConnection info = new DataBaseConnection();
                 int filas = info.ConsolidarConteo();
-                MessageBox.Show("Se consolidaron " + filas + " tarjetas en total.", "Conteo consolidado",
+                MessageBox.Show("Se consolidaron " + filas + " tarjetas en total.", "Inventario BSN",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

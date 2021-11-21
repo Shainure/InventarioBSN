@@ -10,5 +10,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=TEST\SQLEXPRESS;Initial Catalog=DBI;Persist Security Info=True;User ID=TestLogin;Password=12345</Value>
     </Setting>
+    <Setting Name="ThemeSelected" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

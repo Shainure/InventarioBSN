@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Inventario>
+
+	<headerInfo>
+		<titulo>BSN Medical LTDA</titulo>
+		<subtitulo>Inventario</subtitulo>
+	</headerInfo>
+
+	<reportes>
+
+		<reporte>
+			<rptTitulo>Tarjetas conteo</rptTitulo>
+			<rptNombrePag>Tarjetas</rptNombrePag>
+			<procedureQuery>rpt_tarjetas_conteo</procedureQuery>
+			<totales>false</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Consolidado conteo</rptTitulo>
+			<rptNombrePag>Consolidado</rptNombrePag>
+			<procedureQuery>rpt_consolidado_conteo</procedureQuery>
+			<totales>true</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Diferencia conteo vs foto cierre</rptTitulo>
+			<rptNombrePag>Diferencia</rptNombrePag>
+			<procedureQuery>rpt_diferencia_conteo_cierre</procedureQuery>
+			<totales>true</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Narts digitados que no están en foto cierre</rptTitulo>
+			<rptNombrePag>No digitados</rptNombrePag>
+			<procedureQuery>rpt_digitados_no_cierre</procedureQuery>
+			<totales>false</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Narts foto cierre no digitados</rptTitulo>
+			<rptNombrePag>No digitados</rptNombrePag>
+			<procedureQuery>rpt_cierre_no_digitados</procedureQuery>
+			<totales>false</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Total conteo y foto cierre</rptTitulo>
+			<rptNombrePag>Totales</rptNombrePag>
+			<procedureQuery>rpt_total_conteo_cierre</procedureQuery>
+			<totales>false</totales>
+		</reporte>
+
+		<reporte>
+			<rptTitulo>Tarjetas con conteo faltante</rptTitulo>
+			<rptNombrePag>Faltantes</rptNombrePag>
+			<procedureQuery>rpt_tarjetas_sin_contar</procedureQuery>
+			<totales>false</totales>
+		</reporte>
+
+	</reportes>
+
+</Inventario>

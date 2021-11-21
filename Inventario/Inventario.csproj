@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{009D537D-D463-4B56-8D1A-4CF8A7C1F93B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Inventario</RootNamespace>
     <AssemblyName>Inventario</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -58,16 +58,28 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Inventario.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\report.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.19.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetLight, Version=3.4.11.0, Culture=neutral, PublicKeyToken=32fbb46dc1730c57, processorArchitecture=MSIL">
       <HintPath>..\packages\SpreadsheetLight.3.4.11\lib\net40\SpreadsheetLight.dll</HintPath>
     </Reference>
@@ -96,6 +108,9 @@
     <Compile Include="MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\GenerateReport.cs" />
+    <Compile Include="Model\ReportInfo.cs" />
+    <Compile Include="Model\ReportModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reportes.cs" />
@@ -105,6 +120,19 @@
     <Compile Include="ReportesMenu.Designer.cs">
       <DependentUpon>ReportesMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Reports.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Reports.Designer.cs">
+      <DependentUpon>Reports.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Themes.cs" />
     <EmbeddedResource Include="MainMenu.resx">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </EmbeddedResource>
@@ -121,6 +149,12 @@
     <EmbeddedResource Include="ReportesMenu.resx">
       <DependentUpon>ReportesMenu.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Reports.resx">
+      <DependentUpon>Reports.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="DBIDataSet.xsc">
       <DependentUpon>DBIDataSet.xsd</DependentUpon>
     </None>
@@ -134,6 +168,7 @@
     </None>
     <None Include="Inventario_TemporaryKey.pfx" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -154,10 +189,14 @@
     <None Include="Resources\clean.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\save.png" />
+    <Content Include="Resources\save.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Model\Reports.xml" />
     <Content Include="Resources\report.ico" />
+    <Content Include="Reports.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XMLFile1.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +210,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controller\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
