@@ -36,8 +36,8 @@ namespace Inventario.View
             this.lblTitulo = new System.Windows.Forms.Label();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.flowLyPn = new System.Windows.Forms.FlowLayoutPanel();
+            this.button1 = new System.Windows.Forms.Button();
             this.pnContent = new System.Windows.Forms.Panel();
             this.pnHeader.SuspendLayout();
             this.pnHeader2.SuspendLayout();
@@ -118,19 +118,6 @@ namespace Inventario.View
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // button1
-            // 
-            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.button1.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(15, 15);
-            this.button1.Margin = new System.Windows.Forms.Padding(15, 15, 15, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(430, 40);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "example Btn";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            // 
             // flowLyPn
             // 
             this.flowLyPn.AutoSize = true;
@@ -143,6 +130,19 @@ namespace Inventario.View
             this.flowLyPn.Name = "flowLyPn";
             this.flowLyPn.Size = new System.Drawing.Size(462, 105);
             this.flowLyPn.TabIndex = 9;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.button1.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(15, 15);
+            this.button1.Margin = new System.Windows.Forms.Padding(15, 15, 15, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(430, 40);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "example Btn";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             // 
             // pnContent
             // 
@@ -165,7 +165,7 @@ namespace Inventario.View
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Reports";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Reportes";
             this.pnHeader.ResumeLayout(false);
             this.pnHeader.PerformLayout();
@@ -186,8 +186,8 @@ namespace Inventario.View
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel flowLyPn;
         private System.Windows.Forms.Panel pnContent;
+        private System.Windows.Forms.Button button1;
     }
 }

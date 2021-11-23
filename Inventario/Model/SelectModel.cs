@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Inventario.Model
 {
-    public class GenerateReport
+    public class SelectModel
     {
-
+        public string ProcedureQuery { get; set; }
+        public List<string> Params { get; set; }
     }
 }

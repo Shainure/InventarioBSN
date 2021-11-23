@@ -36,13 +36,25 @@ namespace Inventario.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int ThemeSelected {
             get {
                 return ((int)(this["ThemeSelected"]));
             }
             set {
                 this["ThemeSelected"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int DataRows {
+            get {
+                return ((int)(this["DataRows"]));
+            }
+            set {
+                this["DataRows"] = value;
             }
         }
     }

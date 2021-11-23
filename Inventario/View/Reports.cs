@@ -1,4 +1,5 @@
-﻿using Inventario.Model;
+﻿using Inventario.Controller;
+using Inventario.Model;
 using Inventario.Properties;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Inventario.View
 
         private void LoadButtons()
         {
-            List<ReportModel> reportsList = ReportInfo.GetReportList();
+            List<ReportModel> reportsList = ReadXmlData.GetReportList();
 
             foreach (var item in reportsList)
             {
@@ -136,8 +137,16 @@ namespace Inventario.View
             Application.Exit();
         }
 
+
         #endregion
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //GenerateReport rpt = new GenerateReport();
+            //rpt.ExcelReport(null);
 
+            //var x = ReadXmlData.GetSelectQuery("0", "5");
+            var x = Validations.ConsultCard("0", "5");
+        }
     }
 }

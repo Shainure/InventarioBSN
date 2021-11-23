@@ -59,4 +59,44 @@
 
 	</reportes>
 
+	<SelectQueries>
+		
+		<query id="0">
+			<procedureQuery>Sp_inf_tarjeta</procedureQuery>
+			<parameters>
+				<parameter>num_tarjeta</parameter>
+			</parameters>			
+		</query>
+
+		<query id="1">
+			<procedureQuery>Sp_GetConteos</procedureQuery>
+			<parameters>
+				<parameter>num_tarjeta</parameter>
+			</parameters>
+		</query>
+
+		<query id="2">
+			<procedureQuery>Sp_valor_conteo</procedureQuery>
+			<parameters>
+				<parameter>num_tarjeta</parameter>
+				<parameter>conteo</parameter>				
+			</parameters>
+		</query>
+
+		<query id="3">
+			<procedureQuery>Sp_Update_Conteo</procedureQuery>
+			<parameters>
+				<parameter>num_tarjeta</parameter>
+				<parameter>conteo</parameter>
+				<parameter>total</parameter>
+			</parameters>
+		</query>
+
+		<query id="4">
+			<procedureQuery>Sp_Consolidar_Conteo</procedureQuery>
+		</query>
+
+
+	</SelectQueries>
+
 </Inventario>

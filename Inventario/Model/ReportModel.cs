@@ -12,5 +12,6 @@ namespace Inventario.Model
         public string NombrePagina { get; set; }
         public string ProcedureQuery { get; set; }
         public bool Totales { get; set; }
+        public List<ParamsModel> Params { get; set; }
     }
 }

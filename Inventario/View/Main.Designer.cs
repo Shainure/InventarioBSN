@@ -37,31 +37,36 @@ namespace Inventario
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.cbThemeSelector = new System.Windows.Forms.ComboBox();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnMain = new System.Windows.Forms.Panel();
             this.pnMisc = new System.Windows.Forms.Panel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.btnResetSettings = new System.Windows.Forms.Button();
+            this.cbDataRows = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnReports = new System.Windows.Forms.Button();
             this.btnConsolidate = new System.Windows.Forms.Button();
             this.btnClean = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.Conteo = new System.Windows.Forms.Panel();
+            this.pnConteo = new System.Windows.Forms.Panel();
+            this.flpConteo = new System.Windows.Forms.FlowLayoutPanel();
+            this.tb11 = new System.Windows.Forms.TextBox();
+            this.tb12 = new System.Windows.Forms.TextBox();
+            this.tb13 = new System.Windows.Forms.TextBox();
+            this.tb21 = new System.Windows.Forms.TextBox();
+            this.tb22 = new System.Windows.Forms.TextBox();
+            this.tb23 = new System.Windows.Forms.TextBox();
+            this.tb31 = new System.Windows.Forms.TextBox();
+            this.tb32 = new System.Windows.Forms.TextBox();
+            this.tb33 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tbTotal = new System.Windows.Forms.TextBox();
-            this.tb33 = new System.Windows.Forms.TextBox();
-            this.tb32 = new System.Windows.Forms.TextBox();
-            this.tb31 = new System.Windows.Forms.TextBox();
-            this.tb23 = new System.Windows.Forms.TextBox();
-            this.tb22 = new System.Windows.Forms.TextBox();
-            this.tb21 = new System.Windows.Forms.TextBox();
-            this.tb13 = new System.Windows.Forms.TextBox();
-            this.tb12 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.tb11 = new System.Windows.Forms.TextBox();
             this.pnTabla = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
-            this.tbUbic = new System.Windows.Forms.TextBox();
+            this.tbUbicacion = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.tbLote = new System.Windows.Forms.TextBox();
             this.tbBodega = new System.Windows.Forms.TextBox();
@@ -70,18 +75,19 @@ namespace Inventario
             this.label8 = new System.Windows.Forms.Label();
             this.tbNart = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.pnTarjeta = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.tbConteo = new System.Windows.Forms.TextBox();
             this.tbTarjeta = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pnHeader.SuspendLayout();
             this.pnHeader2.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.pnMain.SuspendLayout();
             this.pnMisc.SuspendLayout();
-            this.Conteo.SuspendLayout();
+            this.pnConteo.SuspendLayout();
+            this.flpConteo.SuspendLayout();
             this.pnTabla.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.pnTarjeta.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnHeader
@@ -144,12 +150,13 @@ namespace Inventario
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(351, 35);
+            this.button1.Location = new System.Drawing.Point(263, 37);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // cbThemeSelector
             // 
@@ -169,28 +176,32 @@ namespace Inventario
             this.cbThemeSelector.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cbThemeSelector_DrawItem);
             this.cbThemeSelector.SelectedIndexChanged += new System.EventHandler(this.cbThemeSelector_SelectedIndexChanged);
             // 
-            // panel1
+            // pnMain
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.panel1.Controls.Add(this.pnMisc);
-            this.panel1.Controls.Add(this.btnClose);
-            this.panel1.Controls.Add(this.btnReports);
-            this.panel1.Controls.Add(this.btnConsolidate);
-            this.panel1.Controls.Add(this.btnClean);
-            this.panel1.Controls.Add(this.btnSave);
-            this.panel1.Controls.Add(this.Conteo);
-            this.panel1.Controls.Add(this.pnTabla);
-            this.panel1.Controls.Add(this.panel2);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 100);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(911, 361);
-            this.panel1.TabIndex = 0;
+            this.pnMain.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.pnMain.Controls.Add(this.pnMisc);
+            this.pnMain.Controls.Add(this.btnClose);
+            this.pnMain.Controls.Add(this.btnReports);
+            this.pnMain.Controls.Add(this.btnConsolidate);
+            this.pnMain.Controls.Add(this.btnClean);
+            this.pnMain.Controls.Add(this.btnSave);
+            this.pnMain.Controls.Add(this.pnConteo);
+            this.pnMain.Controls.Add(this.pnTabla);
+            this.pnMain.Controls.Add(this.pnTarjeta);
+            this.pnMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnMain.Location = new System.Drawing.Point(0, 100);
+            this.pnMain.Name = "pnMain";
+            this.pnMain.Size = new System.Drawing.Size(911, 361);
+            this.pnMain.TabIndex = 0;
             // 
             // pnMisc
             // 
             this.pnMisc.BackColor = System.Drawing.Color.Transparent;
             this.pnMisc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnMisc.Controls.Add(this.label14);
+            this.pnMisc.Controls.Add(this.btnResetSettings);
+            this.pnMisc.Controls.Add(this.cbDataRows);
+            this.pnMisc.Controls.Add(this.label13);
             this.pnMisc.Controls.Add(this.label1);
             this.pnMisc.Controls.Add(this.cbThemeSelector);
             this.pnMisc.Controls.Add(this.button1);
@@ -198,6 +209,53 @@ namespace Inventario
             this.pnMisc.Name = "pnMisc";
             this.pnMisc.Size = new System.Drawing.Size(440, 70);
             this.pnMisc.TabIndex = 8;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.Color.Black;
+            this.label14.Location = new System.Drawing.Point(382, 12);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(53, 21);
+            this.label14.TabIndex = 8;
+            this.label14.Text = "Reset";
+            // 
+            // btnResetSettings
+            // 
+            this.btnResetSettings.BackgroundImage = global::Inventario.Properties.Resources.check;
+            this.btnResetSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnResetSettings.FlatAppearance.BorderSize = 0;
+            this.btnResetSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnResetSettings.Location = new System.Drawing.Point(393, 31);
+            this.btnResetSettings.Name = "btnResetSettings";
+            this.btnResetSettings.Size = new System.Drawing.Size(30, 30);
+            this.btnResetSettings.TabIndex = 7;
+            this.btnResetSettings.UseVisualStyleBackColor = true;
+            this.btnResetSettings.Click += new System.EventHandler(this.btnResetSettings_Click);
+            // 
+            // cbDataRows
+            // 
+            this.cbDataRows.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDataRows.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cbDataRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbDataRows.FormattingEnabled = true;
+            this.cbDataRows.Location = new System.Drawing.Point(154, 34);
+            this.cbDataRows.Name = "cbDataRows";
+            this.cbDataRows.Size = new System.Drawing.Size(63, 24);
+            this.cbDataRows.TabIndex = 6;
+            this.cbDataRows.SelectedIndexChanged += new System.EventHandler(this.cbDataRows_SelectedIndexChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.ForeColor = System.Drawing.Color.Black;
+            this.label13.Location = new System.Drawing.Point(150, 13);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(45, 21);
+            this.label13.TabIndex = 4;
+            this.label13.Text = "Filas:";
             // 
             // btnClose
             // 
@@ -260,28 +318,162 @@ namespace Inventario
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // Conteo
+            // pnConteo
             // 
-            this.Conteo.BackColor = System.Drawing.Color.Transparent;
-            this.Conteo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Conteo.Controls.Add(this.label5);
-            this.Conteo.Controls.Add(this.tbTotal);
-            this.Conteo.Controls.Add(this.tb33);
-            this.Conteo.Controls.Add(this.tb32);
-            this.Conteo.Controls.Add(this.tb31);
-            this.Conteo.Controls.Add(this.tb23);
-            this.Conteo.Controls.Add(this.tb22);
-            this.Conteo.Controls.Add(this.tb21);
-            this.Conteo.Controls.Add(this.tb13);
-            this.Conteo.Controls.Add(this.tb12);
-            this.Conteo.Controls.Add(this.label4);
-            this.Conteo.Controls.Add(this.label6);
-            this.Conteo.Controls.Add(this.label11);
-            this.Conteo.Controls.Add(this.tb11);
-            this.Conteo.Location = new System.Drawing.Point(10, 90);
-            this.Conteo.Name = "Conteo";
-            this.Conteo.Size = new System.Drawing.Size(441, 184);
-            this.Conteo.TabIndex = 1;
+            this.pnConteo.BackColor = System.Drawing.Color.Transparent;
+            this.pnConteo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnConteo.Controls.Add(this.flpConteo);
+            this.pnConteo.Controls.Add(this.label5);
+            this.pnConteo.Controls.Add(this.tbTotal);
+            this.pnConteo.Controls.Add(this.label4);
+            this.pnConteo.Controls.Add(this.label6);
+            this.pnConteo.Controls.Add(this.label11);
+            this.pnConteo.Location = new System.Drawing.Point(10, 90);
+            this.pnConteo.Name = "pnConteo";
+            this.pnConteo.Size = new System.Drawing.Size(441, 184);
+            this.pnConteo.TabIndex = 1;
+            // 
+            // flpConteo
+            // 
+            this.flpConteo.Controls.Add(this.tb11);
+            this.flpConteo.Controls.Add(this.tb12);
+            this.flpConteo.Controls.Add(this.tb13);
+            this.flpConteo.Controls.Add(this.tb21);
+            this.flpConteo.Controls.Add(this.tb22);
+            this.flpConteo.Controls.Add(this.tb23);
+            this.flpConteo.Controls.Add(this.tb31);
+            this.flpConteo.Controls.Add(this.tb32);
+            this.flpConteo.Controls.Add(this.tb33);
+            this.flpConteo.Location = new System.Drawing.Point(21, 33);
+            this.flpConteo.Name = "flpConteo";
+            this.flpConteo.Size = new System.Drawing.Size(390, 112);
+            this.flpConteo.TabIndex = 14;
+            // 
+            // tb11
+            // 
+            this.tb11.Enabled = false;
+            this.tb11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb11.Location = new System.Drawing.Point(15, 3);
+            this.tb11.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb11.Name = "tb11";
+            this.tb11.Size = new System.Drawing.Size(100, 22);
+            this.tb11.TabIndex = 0;
+            this.tb11.Tag = "0";
+            this.tb11.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb11.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb11.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb12
+            // 
+            this.tb12.Enabled = false;
+            this.tb12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb12.Location = new System.Drawing.Point(145, 3);
+            this.tb12.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb12.Name = "tb12";
+            this.tb12.Size = new System.Drawing.Size(100, 22);
+            this.tb12.TabIndex = 1;
+            this.tb12.Tag = "0";
+            this.tb12.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb12.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb12.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb13
+            // 
+            this.tb13.Enabled = false;
+            this.tb13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb13.Location = new System.Drawing.Point(275, 3);
+            this.tb13.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb13.Name = "tb13";
+            this.tb13.Size = new System.Drawing.Size(100, 22);
+            this.tb13.TabIndex = 2;
+            this.tb13.Tag = "0";
+            this.tb13.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb13.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb13.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb21
+            // 
+            this.tb21.Enabled = false;
+            this.tb21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb21.Location = new System.Drawing.Point(15, 31);
+            this.tb21.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb21.Name = "tb21";
+            this.tb21.Size = new System.Drawing.Size(100, 22);
+            this.tb21.TabIndex = 3;
+            this.tb21.Tag = "1";
+            this.tb21.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb21.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb21.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb22
+            // 
+            this.tb22.Enabled = false;
+            this.tb22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb22.Location = new System.Drawing.Point(145, 31);
+            this.tb22.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb22.Name = "tb22";
+            this.tb22.Size = new System.Drawing.Size(100, 22);
+            this.tb22.TabIndex = 4;
+            this.tb22.Tag = "1";
+            this.tb22.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb22.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb22.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb23
+            // 
+            this.tb23.Enabled = false;
+            this.tb23.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb23.Location = new System.Drawing.Point(275, 31);
+            this.tb23.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb23.Name = "tb23";
+            this.tb23.Size = new System.Drawing.Size(100, 22);
+            this.tb23.TabIndex = 5;
+            this.tb23.Tag = "1";
+            this.tb23.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb23.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb23.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb31
+            // 
+            this.tb31.Enabled = false;
+            this.tb31.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb31.Location = new System.Drawing.Point(15, 59);
+            this.tb31.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb31.Name = "tb31";
+            this.tb31.Size = new System.Drawing.Size(100, 22);
+            this.tb31.TabIndex = 6;
+            this.tb31.Tag = "2";
+            this.tb31.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb31.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb31.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb32
+            // 
+            this.tb32.Enabled = false;
+            this.tb32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb32.Location = new System.Drawing.Point(145, 59);
+            this.tb32.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb32.Name = "tb32";
+            this.tb32.Size = new System.Drawing.Size(100, 22);
+            this.tb32.TabIndex = 7;
+            this.tb32.Tag = "2";
+            this.tb32.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb32.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb32.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+            // 
+            // tb33
+            // 
+            this.tb33.Enabled = false;
+            this.tb33.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb33.Location = new System.Drawing.Point(275, 59);
+            this.tb33.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
+            this.tb33.Name = "tb33";
+            this.tb33.Size = new System.Drawing.Size(100, 22);
+            this.tb33.TabIndex = 8;
+            this.tb33.Tag = "2";
+            this.tb33.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+            this.tb33.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+            this.tb33.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
             // 
             // label5
             // 
@@ -299,81 +491,17 @@ namespace Inventario
             this.tbTotal.Enabled = false;
             this.tbTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbTotal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tbTotal.Location = new System.Drawing.Point(315, 145);
+            this.tbTotal.Location = new System.Drawing.Point(315, 148);
             this.tbTotal.Name = "tbTotal";
             this.tbTotal.Size = new System.Drawing.Size(100, 22);
             this.tbTotal.TabIndex = 9;
-            // 
-            // tb33
-            // 
-            this.tb33.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb33.Location = new System.Drawing.Point(315, 89);
-            this.tb33.Name = "tb33";
-            this.tb33.Size = new System.Drawing.Size(100, 22);
-            this.tb33.TabIndex = 8;
-            // 
-            // tb32
-            // 
-            this.tb32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb32.Location = new System.Drawing.Point(161, 89);
-            this.tb32.Name = "tb32";
-            this.tb32.Size = new System.Drawing.Size(100, 22);
-            this.tb32.TabIndex = 7;
-            // 
-            // tb31
-            // 
-            this.tb31.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb31.Location = new System.Drawing.Point(23, 89);
-            this.tb31.Name = "tb31";
-            this.tb31.Size = new System.Drawing.Size(100, 22);
-            this.tb31.TabIndex = 6;
-            // 
-            // tb23
-            // 
-            this.tb23.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb23.Location = new System.Drawing.Point(315, 61);
-            this.tb23.Name = "tb23";
-            this.tb23.Size = new System.Drawing.Size(100, 22);
-            this.tb23.TabIndex = 5;
-            // 
-            // tb22
-            // 
-            this.tb22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb22.Location = new System.Drawing.Point(161, 61);
-            this.tb22.Name = "tb22";
-            this.tb22.Size = new System.Drawing.Size(100, 22);
-            this.tb22.TabIndex = 4;
-            // 
-            // tb21
-            // 
-            this.tb21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb21.Location = new System.Drawing.Point(23, 61);
-            this.tb21.Name = "tb21";
-            this.tb21.Size = new System.Drawing.Size(100, 22);
-            this.tb21.TabIndex = 3;
-            // 
-            // tb13
-            // 
-            this.tb13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb13.Location = new System.Drawing.Point(315, 33);
-            this.tb13.Name = "tb13";
-            this.tb13.Size = new System.Drawing.Size(100, 22);
-            this.tb13.TabIndex = 2;
-            // 
-            // tb12
-            // 
-            this.tb12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb12.Location = new System.Drawing.Point(161, 33);
-            this.tb12.Name = "tb12";
-            this.tb12.Size = new System.Drawing.Size(100, 22);
-            this.tb12.TabIndex = 1;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(153, 12);
+            this.label4.Location = new System.Drawing.Point(163, 12);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(117, 18);
             this.label4.TabIndex = 12;
@@ -384,7 +512,7 @@ namespace Inventario
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Black;
-            this.label6.Location = new System.Drawing.Point(310, 12);
+            this.label6.Location = new System.Drawing.Point(293, 12);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(110, 18);
             this.label6.TabIndex = 13;
@@ -401,20 +529,12 @@ namespace Inventario
             this.label11.TabIndex = 11;
             this.label11.Text = "Tendidos";
             // 
-            // tb11
-            // 
-            this.tb11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb11.Location = new System.Drawing.Point(23, 33);
-            this.tb11.Name = "tb11";
-            this.tb11.Size = new System.Drawing.Size(100, 22);
-            this.tb11.TabIndex = 0;
-            // 
             // pnTabla
             // 
             this.pnTabla.BackColor = System.Drawing.Color.Transparent;
             this.pnTabla.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnTabla.Controls.Add(this.label9);
-            this.pnTabla.Controls.Add(this.tbUbic);
+            this.pnTabla.Controls.Add(this.tbUbicacion);
             this.pnTabla.Controls.Add(this.label12);
             this.pnTabla.Controls.Add(this.tbLote);
             this.pnTabla.Controls.Add(this.tbBodega);
@@ -439,14 +559,14 @@ namespace Inventario
             this.label9.TabIndex = 41;
             this.label9.Text = "Lote:";
             // 
-            // tbUbic
+            // tbUbicacion
             // 
-            this.tbUbic.Enabled = false;
-            this.tbUbic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbUbic.Location = new System.Drawing.Point(123, 148);
-            this.tbUbic.Name = "tbUbic";
-            this.tbUbic.Size = new System.Drawing.Size(303, 22);
-            this.tbUbic.TabIndex = 4;
+            this.tbUbicacion.Enabled = false;
+            this.tbUbicacion.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbUbicacion.Location = new System.Drawing.Point(123, 148);
+            this.tbUbicacion.Name = "tbUbicacion";
+            this.tbUbicacion.Size = new System.Drawing.Size(303, 22);
+            this.tbUbicacion.TabIndex = 4;
             // 
             // label12
             // 
@@ -529,18 +649,18 @@ namespace Inventario
             this.label7.TabIndex = 30;
             this.label7.Text = "Nart: ";
             // 
-            // panel2
+            // pnTarjeta
             // 
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.tbConteo);
-            this.panel2.Controls.Add(this.tbTarjeta);
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Location = new System.Drawing.Point(10, 10);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(441, 70);
-            this.panel2.TabIndex = 0;
+            this.pnTarjeta.BackColor = System.Drawing.Color.Transparent;
+            this.pnTarjeta.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnTarjeta.Controls.Add(this.label2);
+            this.pnTarjeta.Controls.Add(this.tbConteo);
+            this.pnTarjeta.Controls.Add(this.tbTarjeta);
+            this.pnTarjeta.Controls.Add(this.label3);
+            this.pnTarjeta.Location = new System.Drawing.Point(10, 10);
+            this.pnTarjeta.Name = "pnTarjeta";
+            this.pnTarjeta.Size = new System.Drawing.Size(441, 70);
+            this.pnTarjeta.TabIndex = 0;
             // 
             // label2
             // 
@@ -562,6 +682,8 @@ namespace Inventario
             this.tbConteo.Name = "tbConteo";
             this.tbConteo.Size = new System.Drawing.Size(100, 22);
             this.tbConteo.TabIndex = 1;
+            this.tbConteo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CheckConteoValue);
+            this.tbConteo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AllowConteo3);
             // 
             // tbTarjeta
             // 
@@ -570,6 +692,9 @@ namespace Inventario
             this.tbTarjeta.Name = "tbTarjeta";
             this.tbTarjeta.Size = new System.Drawing.Size(100, 22);
             this.tbTarjeta.TabIndex = 0;
+            this.tbTarjeta.TextChanged += new System.EventHandler(this.CardChanged);
+            this.tbTarjeta.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CheckCardNumber);
+            this.tbTarjeta.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
             // 
             // label3
             // 
@@ -588,7 +713,7 @@ namespace Inventario
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(911, 461);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pnMain);
             this.Controls.Add(this.pnHeader);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -596,20 +721,23 @@ namespace Inventario
             this.MaximumSize = new System.Drawing.Size(927, 500);
             this.MinimumSize = new System.Drawing.Size(927, 500);
             this.Name = "Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Conteos Inventario BSN Medical";
             this.pnHeader.ResumeLayout(false);
             this.pnHeader.PerformLayout();
             this.pnHeader2.ResumeLayout(false);
             this.pnHeader2.PerformLayout();
-            this.panel1.ResumeLayout(false);
+            this.pnMain.ResumeLayout(false);
             this.pnMisc.ResumeLayout(false);
             this.pnMisc.PerformLayout();
-            this.Conteo.ResumeLayout(false);
-            this.Conteo.PerformLayout();
+            this.pnConteo.ResumeLayout(false);
+            this.pnConteo.PerformLayout();
+            this.flpConteo.ResumeLayout(false);
+            this.flpConteo.PerformLayout();
             this.pnTabla.ResumeLayout(false);
             this.pnTabla.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.pnTarjeta.ResumeLayout(false);
+            this.pnTarjeta.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -619,19 +747,19 @@ namespace Inventario
         private System.Windows.Forms.Panel pnHeader;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Panel pnHeader2;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnMain;
         private System.Windows.Forms.ComboBox cbThemeSelector;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel pnTarjeta;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbConteo;
         private System.Windows.Forms.TextBox tbTarjeta;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel pnTabla;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox tbUbic;
+        private System.Windows.Forms.TextBox tbUbicacion;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbLote;
         private System.Windows.Forms.TextBox tbBodega;
@@ -640,7 +768,7 @@ namespace Inventario
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox tbNart;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Panel Conteo;
+        private System.Windows.Forms.Panel pnConteo;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbTotal;
         private System.Windows.Forms.TextBox tb33;
@@ -661,6 +789,11 @@ namespace Inventario
         private System.Windows.Forms.Button btnConsolidate;
         private System.Windows.Forms.Button btnClean;
         private System.Windows.Forms.Panel pnMisc;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.FlowLayoutPanel flpConteo;
+        private System.Windows.Forms.ComboBox cbDataRows;
+        private System.Windows.Forms.Button btnResetSettings;
+        private System.Windows.Forms.Label label14;
     }
 }
 
