@@ -10,12 +10,10 @@ namespace Inventario.Controller
 {
     public class Validations
     {
-        private static DbLogic dbLogic = new DbLogic();
-
         public static DataTable ConsultCard(string index, params string[] _params)
         {
             ReportModel cardModel = ReadXmlData.GetSelectQuery(index, _params);
-            var cardInfo = dbLogic.SqlStoredProcedure(cardModel.ProcedureQuery, cardModel.Params);
+            var cardInfo = DbLogic.SqlStoredProcedure(cardModel);
 
             return cardInfo;
         }
@@ -23,7 +21,7 @@ namespace Inventario.Controller
         public static bool RequestConteo3(string index, params string[] _params)
         {
             ReportModel conteoModel = ReadXmlData.GetSelectQuery(index, _params);
-            var cardInfo = dbLogic.SqlStoredProcedure(conteoModel.ProcedureQuery, conteoModel.Params);
+            var cardInfo = DbLogic.SqlStoredProcedure(conteoModel);
 
             int conteo1 = Convert.ToInt32(cardInfo.Rows[0][0]);
             int conteo2 = Convert.ToInt32(cardInfo.Rows[0][1]);
@@ -41,7 +39,7 @@ namespace Inventario.Controller
         public static string ValidateConteo3(string index, params string[] _params)
         {
             ReportModel conteoModel = ReadXmlData.GetSelectQuery(index, _params);
-            var cardInfo = dbLogic.SqlStoredProcedure(conteoModel.ProcedureQuery, conteoModel.Params);
+            var cardInfo = DbLogic.SqlStoredProcedure(conteoModel);
 
             int conteo1 = Convert.ToInt32(cardInfo.Rows[0][0]);
             int conteo2 = Convert.ToInt32(cardInfo.Rows[0][1]);
@@ -66,7 +64,7 @@ namespace Inventario.Controller
         public static bool AllowConteo3(string index, params string[] _params)
         {
             ReportModel conteoModel = ReadXmlData.GetSelectQuery(index, _params);
-            var cardInfo = dbLogic.SqlStoredProcedure(conteoModel.ProcedureQuery, conteoModel.Params);
+            var cardInfo = DbLogic.SqlStoredProcedure(conteoModel);
 
             int conteo1 = Convert.ToInt32(cardInfo.Rows[0][0]);
             int conteo2 = Convert.ToInt32(cardInfo.Rows[0][1]);
@@ -84,7 +82,7 @@ namespace Inventario.Controller
         public static int CheckConteoValue(string index, params string[] _params)
         {
             ReportModel conteoModel = ReadXmlData.GetSelectQuery(index, _params);
-            var cardInfo = dbLogic.SqlStoredProcedure(conteoModel.ProcedureQuery, conteoModel.Params);
+            var cardInfo = DbLogic.SqlStoredProcedure(conteoModel);
 
             return Convert.ToInt32(cardInfo.Rows[0][0]);
         }

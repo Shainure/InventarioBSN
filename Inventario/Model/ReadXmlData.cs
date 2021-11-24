@@ -25,7 +25,6 @@ namespace Inventario.Model
                 Params = new List<ParamsModel>()
             };
 
-
             int index = 0;
             try
             {
@@ -41,17 +40,24 @@ namespace Inventario.Model
             }
             catch (IndexOutOfRangeException ex)
             {
-                StringBuilder errorMessage = new StringBuilder();
-                errorMessage.Append("Error en ReadXmlData: Parametros fuera de rango\r\n");
-                errorMessage.Append($"HResult: {ex.HResult} {Environment.NewLine}");
-                errorMessage.Append($"Message: {ex.Message} {Environment.NewLine}");
-                errorMessage.Append($"StackTrace: {ex.StackTrace} {Environment.NewLine}");
-
-                MessageBox.Show(Convert.ToString(errorMessage), "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(BuildErrorMsg(ex), "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
             
             return SelectQuery;
+        }
+
+        public static string[] GetReportsHeader()
+        {
+            var headers = reportsXml.Descendants("headerInfo")
+                .First();
+
+            string[] headersStr = new string[2];
+
+            headersStr[0] = headers.Element("titulo").Value;
+            headersStr[1] = $"{headers.Element("subtitulo").Value} {DateTime.Now.ToString("yyyy")}";
+
+            return headersStr;
         }
 
 
@@ -85,6 +91,17 @@ namespace Inventario.Model
             }
 
             return reportsList;
+        }
+
+        private static string BuildErrorMsg(IndexOutOfRangeException ex)
+        {
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.Append("Error en ReadXmlData: Parametros fuera de rango\r\n");
+            errorMessage.Append($"HResult: {ex.HResult} {Environment.NewLine}");
+            errorMessage.Append($"Message: {ex.Message} {Environment.NewLine}");
+            errorMessage.Append($"StackTrace: {ex.StackTrace} {Environment.NewLine}");
+
+            return Convert.ToString(errorMessage);
         }
     }
 }

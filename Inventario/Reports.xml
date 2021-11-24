@@ -96,7 +96,6 @@
 			<procedureQuery>Sp_Consolidar_Conteo</procedureQuery>
 		</query>
 
-
 	</SelectQueries>
 
 </Inventario>

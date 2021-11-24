@@ -77,11 +77,13 @@ namespace Inventario.View
             Button btn = (Button)sender;
             ReportModel rpt = (ReportModel)btn.Tag;
 
-            Console.WriteLine(rpt.NombrePagina);
-            Console.WriteLine(rpt.RptTitulo);
-            Console.WriteLine(rpt.ProcedureQuery);
-            Console.WriteLine(rpt.Totales);
+            Console.WriteLine($"rptTitulo {rpt.RptTitulo}");
+            Console.WriteLine("rptNombrePag "+rpt.NombrePagina);            
+            Console.WriteLine("procedureQuery "+rpt.ProcedureQuery);
+            Console.WriteLine("totales "+rpt.Totales);
             Console.WriteLine("------------------");
+
+            GenerateReport.ExcelReport(rpt);
         }
 
         #endregion
@@ -142,11 +144,7 @@ namespace Inventario.View
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //GenerateReport rpt = new GenerateReport();
-            //rpt.ExcelReport(null);
-
-            //var x = ReadXmlData.GetSelectQuery("0", "5");
-            var x = Validations.ConsultCard("0", "5");
+            
         }
     }
 }

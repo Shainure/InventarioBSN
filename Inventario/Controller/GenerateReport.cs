@@ -8,119 +8,150 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Inventario.Model;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
+using System.IO;
+using System.Security.Cryptography;
+using System.Windows.Forms;
+//using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Inventario.Controller
 {
     public class GenerateReport
     {
-        private DbLogic _DbLogic = new DbLogic();
-
-        private readonly string anio = DateTime.Now.ToString("yyyy");
-        private readonly string fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-
-        private int dataCell = 6;           //Where the data starts (Column names > Data)
-        private char ColumnChar = 'A';      //Char for the first column where data starts (excel)
-
-
-        public SLDocument ExcelReport(ReportModel report)
+        public static bool ExcelReport(ReportModel oReport)
         {
-            List<ParamsModel> Params = new List<ParamsModel>();
-            Params.Add(new ParamsModel { ParamName="num_tarjeta", ParamValue="5" });
-            
-            //Params.Add(new ParamsModel { ParamName="name3", ParamValue="Value3" });
-            //Params.Add(new ParamsModel { ParamName="name4", ParamValue="Value4" });
-            var asd = _DbLogic.SqlStoredProcedure("Sp_inf_tarjeta", Params);
-            Console.ReadLine();
+            //Get information for the report 
+            oReport.ProcedureQuery = "test";
+            System.Data.DataTable DtReport = DbLogic.SqlStoredProcedure(oReport);
 
-            /*
-            dataCell = 6;
-            int numColumna = reader.FieldCount;                         //Número de columnas
-            ColumnChar = (char)(64 + reader.FieldCount);            //Número de columnas max en letra (para excel)
 
-            SqlDataReader rdr = reader;
-            var table = rdr.GetSchemaTable();       //Obtengo nombre de columnas
-            SLDocument newSld = sld;
-
-            newSld.SetCellValue("A1", "BSN Medical LTDA");
-            newSld.SetCellValue("A2", "Inventario " + anio);
-            newSld.SetCellValue("A3", fecha);
-            newSld.SetCellValue("A4", subTitulo);
-
-            SLStyle estiloT = newSld.CreateStyle();     //Estilo título
-            estiloT.Font.FontSize = 16;
-            estiloT.Font.Bold = true;
-            estiloT.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            SLStyle estiloC = newSld.CreateStyle();     //Estilo cabeceras
-            estiloC.Font.Bold = true;
-            newSld.SetCellStyle("A4", estiloC);         //Imprime sin centrar
-            estiloC.Alignment.Horizontal = HorizontalAlignmentValues.Center;
-
-            newSld.SetCellStyle("A1", estiloT);
-            newSld.SetCellStyle("A2", estiloC);
-            newSld.SetCellStyle("A3", estiloC);
-
-            newSld.MergeWorksheetCells("A1", ColumnChar + "1");      //Combino primeras celdas
-            newSld.MergeWorksheetCells("A2", ColumnChar + "2");
-            newSld.MergeWorksheetCells("A3", ColumnChar + "3");
-            newSld.MergeWorksheetCells("A4", ColumnChar + "4");
-
-            estiloC.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.Aqua, System.Drawing.Color.Aquamarine);       //Color a cabeceras
-            newSld.SetCellStyle("A6", ColumnChar + "6", estiloC);
-
-            newSld.RenameWorksheet(SLDocument.DefaultFirstSheetName, nomPag);      //Nombre de la hoja
-
-            int letraCol = 65; //Letra de columna (convierto a char luego)
-
-            foreach (DataRow row in table.Rows)                                 //Lleno nombre de columnas
+            if (DtReport != null || DtReport.Rows.Count == 0)
             {
-                newSld.SetCellValue((char)letraCol + dataCell.ToString(), row.Field<string>("ColumnName"));
-
-                letraCol++;
+                MessageBox.Show("No se encontró información para generar el reporte.", "Inventario BSN",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                //sqlDB.CloseConnection();
+                return false;
             }
 
 
-            var tipos = new List<string>();
-            int j = 0;
+            int CurrentColumn = (int)'A';                           //Used to iterate excel columns
+            int ColumnsNumber = DtReport.Columns.Count;             //Report column number based on the query
+            int CurrentRow = 6;                                     //Row where the data starts to be written            
+            char LastColumnChar = (char)(64 + ColumnsNumber);       //Column number (char)
+            string[] headers = ReadXmlData.GetReportsHeader();      //Get headers            
 
-            while (rdr.Read())       //Lleno la tabla conlos datos del query
+            //Create excel file
+            SLDocument ExcelFile = new SLDocument();
+
+            //Set excel Page name
+            ExcelFile.RenameWorksheet(SLDocument.DefaultFirstSheetName, oReport.NombrePagina);
+
+            //Insert Initial data
+            ExcelFile.SetCellValue("A1", headers[0]);
+            ExcelFile.SetCellValue("A2", headers[1]);
+            ExcelFile.SetCellValue("A3", DateTime.Now.ToString("dddd, dd MMMM yyyy"));
+            ExcelFile.SetCellValue("A4", oReport.RptTitulo);            
+
+            //Tittle style
+            SLStyle StyleTittle = ExcelFile.CreateStyle();
+            StyleTittle.Font.FontSize = 16;
+            StyleTittle.Font.Bold = true;
+            StyleTittle.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            //Headers Style
+            SLStyle StyleHeaders = ExcelFile.CreateStyle();
+            StyleHeaders.Font.Bold = true;
+            ExcelFile.SetCellStyle("A4", StyleHeaders);     //Apply style before centering
+            StyleHeaders.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+
+            //Apply styles
+            ExcelFile.SetCellStyle("A1", StyleTittle);
+            ExcelFile.SetCellStyle("A2", StyleHeaders);
+            ExcelFile.SetCellStyle("A3", StyleHeaders);
+
+            //Merge header cells to the last cell of the table columns size
+            ExcelFile.MergeWorksheetCells("A1", LastColumnChar + "1");
+            ExcelFile.MergeWorksheetCells("A2", LastColumnChar + "2");
+            ExcelFile.MergeWorksheetCells("A3", LastColumnChar + "3");
+            ExcelFile.MergeWorksheetCells("A4", LastColumnChar + "4");
+
+            //Set coloto "Header styles" Style object
+            StyleHeaders.Fill.SetPattern(PatternValues.Solid, 
+                                        System.Drawing.Color.Aqua,          //Foreground color
+                                        System.Drawing.Color.Aquamarine);   //Background Color
+
+            //Set header style (with color) to the Data column names
+            ExcelFile.SetCellStyle("A6", LastColumnChar + "6", StyleHeaders);
+
+
+            // Set table headers text
+            for (int i = 0; i < ColumnsNumber; i++)
             {
-                dataCell++;
-                letraCol = 65;
-                for (int i = 0; i < numColumna; i++)
+                ExcelFile.SetCellValue($"{(char)CurrentColumn++}{CurrentRow}", DtReport.Columns[i].ColumnName);
+            }
+
+            //Fil the rest of the report
+            foreach (DataRow item in DtReport.Rows)
+            {
+                //Reset column
+                CurrentColumn = (int)'A';
+
+                //Step on next row
+                CurrentRow++;
+                for (int i = 0; i < item.ItemArray.Length; i++)
                 {
-                    // newSld = new archivo de excel
-                    if (rdr.GetFieldType(i).ToString() == "System.String")
-                        newSld.SetCellValue((char)letraCol + dataCell.ToString(), "'"+rdr.GetValue(i).ToString());
+                    if (item[i] is string)
+                    {
+                        ExcelFile.SetCellValue($"{(char)CurrentColumn++}{CurrentRow}",
+                            Convert.ToString(item[i]));
+                    }
                     else
                     {
-                        int value = Convert.ToInt32(rdr.GetValue(i));
-                        if (value < 0)
-                            value *= -1;
-                        newSld.SetCellValue((char)letraCol + dataCell.ToString(), value);
+                        ExcelFile.SetCellValue($"{(char)CurrentColumn++}{CurrentRow}",
+                            Convert.ToInt32(item[i]));
                     }
-                    letraCol++;
                 }
-                //Guardo los tipos de columnas solo 1 vez
-                while (j < numColumna)
-                {
-                    tipos.Add(rdr.GetFieldType(j).ToString());
-                    j++;
-                }
-
             }
-            SLStyle estiloB = newSld.CreateStyle(); //Creo estilo para bordes
-            estiloB.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
-            estiloB.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
-            //estiloB.Alignment.Horizontal(Right);
 
-            newSld.SetCellStyle("A6", ColumnChar.ToString() + dataCell.ToString(), estiloB);        //Asigno bordes al rango
-            newSld.AutoFitColumn("A", ColumnChar.ToString());                                     //Autoajustar columnas
+            //Style for the borders 
+            SLStyle StyleBorder = ExcelFile.CreateStyle();
+            StyleBorder.Border.LeftBorder.BorderStyle = BorderStyleValues.Thin;
+            StyleBorder.Border.RightBorder.BorderStyle = BorderStyleValues.Thin;
+            StyleBorder.Border.TopBorder.BorderStyle = BorderStyleValues.Thin;
+            StyleBorder.Border.BottomBorder.BorderStyle = BorderStyleValues.Thin;
+            //StyleBorder.Alignment.Horizontal(Right);
 
-            return newSld;*/
-            return null;
+            //Apply border style to the data table 
+            ExcelFile.SetCellStyle("A6", $"{LastColumnChar}{CurrentRow}", StyleBorder);
+            ExcelFile.AutoFitColumn("A", Convert.ToString(LastColumnChar));
+
+            //Get file path & name
+            string tmpFile = FilePath($"{oReport.RptTitulo} {DateTime.Now.ToString("yyyy")}");
+
+            //Save file on disk
+            ExcelFile.SaveAs(tmpFile);         
+            System.Diagnostics.Process.Start(tmpFile);
+
+            //Clear the memory
+            ExcelFile.Dispose();
+
+            return true;
+        }
+
+
+        private static string FilePath(string fileName)
+        {
+            string tmpFile = Path.Combine(Path.GetTempPath(), fileName);
+            string aux = tmpFile;
+            int index = 1;
+            while (File.Exists(tmpFile + ".xlsx"))
+            {
+                tmpFile = $"{aux} ({index})";
+                index++;
+            }
+            tmpFile += ".xlsx";
+            return tmpFile;
         }
     }
 }

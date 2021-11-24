@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{009D537D-D463-4B56-8D1A-4CF8A7C1F93B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Inventario</RootNamespace>
     <AssemblyName>Inventario</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -103,7 +103,6 @@
     <Compile Include="Model\ParamsModel.cs" />
     <Compile Include="Model\ReadXmlData.cs" />
     <Compile Include="Model\ReportModel.cs" />
-    <Compile Include="Model\SelectModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Reportes.cs" />

@@ -10,25 +10,26 @@ using System.Windows.Forms;
 
 namespace Inventario.Model
 {
-    public class DbLogic
+    public static class DbLogic
     {
-        private string conString = @"Server=TEST\SQLEXPRESS;Database = DBI;User ID = TestLogin; Password=12345;";
-        //private string conString = @"Data Source=EC660980\SQLEXPRESS;Initial Catalog = DBI;Integrated Security=True";
+        private static string conString = @"Server=TEST\SQLEXPRESS;Database = DBI;User ID = TestLogin; Password=12345;";
+        //private static string conString = @"Data Source=EC660980\SQLEXPRESS;Initial Catalog = DBI;Integrated Security=True";
 
 
         // ****SELECT* Stored procedure - List of params
-        public DataTable SqlStoredProcedure(string SpString, List<ParamsModel> Params)
+        public static DataTable SqlStoredProcedure(ReportModel reportInfo)
         {
+
             try
             {
                 using (SqlConnection myConn = new SqlConnection(conString))
-                using (SqlCommand cmd = new SqlCommand(SpString, myConn))
+                using (SqlCommand cmd = new SqlCommand(reportInfo.ProcedureQuery, myConn))
                 {
                     myConn.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
-                    if (Params != null && Params.Count > 0)
+                    if (reportInfo.Params != null && reportInfo.Params.Count > 0)
                     {
-                        foreach (var prm in Params)
+                        foreach (var prm in reportInfo.Params)
                         {
                             cmd.Parameters.AddWithValue(prm.ParamName, prm.ParamValue);
                         }
@@ -50,7 +51,7 @@ namespace Inventario.Model
 
 
         //NonQuery (insert data)
-        public int SqlSpNonQuery(string SpString, List<ParamsModel> Params)
+        public static int SqlSpNonQuery(string SpString, List<ParamsModel> Params)
         {
             try
             {
@@ -80,11 +81,8 @@ namespace Inventario.Model
         }
 
 
-
-
-
         // Aviso, no se encontraron datos para generar el reporte
-        private bool avisoSinDatos(SqlDataReader mdr)
+        private static bool avisoSinDatos(SqlDataReader mdr)
         {
             if (mdr.HasRows)
                 return true;
@@ -98,8 +96,7 @@ namespace Inventario.Model
         }
 
 
-
-        private void SqlError(SqlException ex)
+        private static void SqlError(SqlException ex)
         {
             StringBuilder errorMessages = new StringBuilder();
             for (int i = 0; i < ex.Errors.Count; i++)
