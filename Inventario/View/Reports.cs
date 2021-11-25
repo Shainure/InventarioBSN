@@ -1,14 +1,8 @@
 ﻿using Inventario.Controller;
 using Inventario.Model;
-using Inventario.Properties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Inventario.View
@@ -20,16 +14,16 @@ namespace Inventario.View
             InitializeComponent();
             SelectThemeColor();
 
-            //Center the tittle (INVENTARIO BSN)
-            this.lblTitulo.Left = (this.pnHeader.Width - lblTitulo.Width) / 2;
-            this.lblTitulo.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTitulo.Height) / 2;
+            //Center the tittle 
+            this.lblTittle.Left = (this.pnHeader.Width - lblTittle.Width) / 2;
+            this.lblTittle.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTittle.Height) / 2;
 
             //Set Date label
             this.lblDate.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");
             lblDate.Left = (this.pnHeader2.Width - lblDate.Width);
-            
+
             //Load buttons
-            LoadButtons();            
+            LoadButtons();
         }
 
 
@@ -37,10 +31,12 @@ namespace Inventario.View
 
         private void LoadButtons()
         {
+            //Get report list from XML
             List<ReportModel> reportsList = ReadXmlData.GetReportList();
 
             foreach (var item in reportsList)
             {
+                //Create new button and initialize
                 Button button = new Button
                 {
                     Text = item.RptTitulo,
@@ -48,9 +44,13 @@ namespace Inventario.View
                     Margin = new Padding(15, 15, 15, 0),
                     Size = new Size(430, 40),
                     UseVisualStyleBackColor = true,
-                    Tag = item
+                    Tag = item      //Set the report object (with data) as Tag property on the button
                 };
+
+                //Asign event to the button
                 button.Click += new EventHandler(ButtonClick);
+
+                //Add button to the FlowLayoutPanel
                 this.flowLyPn.Controls.Add(button);
             }
 
@@ -76,13 +76,6 @@ namespace Inventario.View
         {
             Button btn = (Button)sender;
             ReportModel rpt = (ReportModel)btn.Tag;
-
-            Console.WriteLine($"rptTitulo {rpt.RptTitulo}");
-            Console.WriteLine("rptNombrePag "+rpt.NombrePagina);            
-            Console.WriteLine("procedureQuery "+rpt.ProcedureQuery);
-            Console.WriteLine("totales "+rpt.Totales);
-            Console.WriteLine("------------------");
-
             GenerateReport.ExcelReport(rpt);
         }
 
@@ -116,8 +109,8 @@ namespace Inventario.View
                 // value < 0 = darker, value > 0 = lighter
                 secondaryColor = Themes.ChangeColorBrightness(color, -0.2);
             }
-            
-            this.pnHeader2.BackColor = secondaryColor;            
+
+            this.pnHeader2.BackColor = secondaryColor;
         }
 
 
@@ -126,6 +119,7 @@ namespace Inventario.View
 
         #region -> Form Buttons
 
+        //Back to main menu
         private void btnBack_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -134,17 +128,13 @@ namespace Inventario.View
             main.Show();
         }
 
+        //Close program
         private void btnClose_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-
         #endregion
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            
-        }
     }
 }

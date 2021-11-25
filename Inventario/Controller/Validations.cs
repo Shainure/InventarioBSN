@@ -1,16 +1,13 @@
 ﻿using Inventario.Model;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventario.Controller
 {
     public class Validations
     {
-        public static DataTable ConsultCard(string index, params string[] _params)
+        public static DataTable CheckCard(string index, params string[] _params)
         {
             ReportModel cardModel = ReadXmlData.GetSelectQuery(index, _params);
             var cardInfo = DbLogic.SqlStoredProcedure(cardModel);
@@ -32,7 +29,7 @@ namespace Inventario.Controller
             }
             else
             {
-                return false; 
+                return false;
             }
         }
 
@@ -52,7 +49,7 @@ namespace Inventario.Controller
             else
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"¡Conteo 3 es diferente a los otros conteos!\r\n");
+                sb.AppendLine($"¡Conteo 3 de la tarjeta {_params[0]} es diferente a los otros conteos!\r\n");
                 sb.AppendLine($"Conteo 1 = {conteo1}");
                 sb.AppendLine($"Conteo 2 = {conteo2}");
                 sb.AppendLine($"Conteo 3 = {conteo3}");
@@ -76,7 +73,7 @@ namespace Inventario.Controller
             else
             {
                 return true;
-            }            
+            }
         }
 
         public static int CheckConteoValue(string index, params string[] _params)

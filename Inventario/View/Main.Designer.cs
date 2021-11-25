@@ -33,9 +33,8 @@ namespace Inventario
             this.pnHeader = new System.Windows.Forms.Panel();
             this.pnHeader2 = new System.Windows.Forms.Panel();
             this.lblDate = new System.Windows.Forms.Label();
-            this.lblTitulo = new System.Windows.Forms.Label();
+            this.lblTittle = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.cbThemeSelector = new System.Windows.Forms.ComboBox();
             this.pnMain = new System.Windows.Forms.Panel();
             this.pnMisc = new System.Windows.Forms.Panel();
@@ -94,7 +93,7 @@ namespace Inventario
             // 
             this.pnHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(136)))));
             this.pnHeader.Controls.Add(this.pnHeader2);
-            this.pnHeader.Controls.Add(this.lblTitulo);
+            this.pnHeader.Controls.Add(this.lblTittle);
             this.pnHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnHeader.Location = new System.Drawing.Point(0, 0);
             this.pnHeader.Name = "pnHeader";
@@ -125,17 +124,17 @@ namespace Inventario
             this.lblDate.Text = "Date";
             this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lblTitulo
+            // lblTittle
             // 
-            this.lblTitulo.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitulo.ForeColor = System.Drawing.Color.White;
-            this.lblTitulo.Location = new System.Drawing.Point(3, 9);
-            this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(371, 46);
-            this.lblTitulo.TabIndex = 2;
-            this.lblTitulo.Text = "INVENTARIO BSN";
+            this.lblTittle.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblTittle.AutoSize = true;
+            this.lblTittle.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTittle.ForeColor = System.Drawing.Color.White;
+            this.lblTittle.Location = new System.Drawing.Point(3, 9);
+            this.lblTittle.Name = "lblTittle";
+            this.lblTittle.Size = new System.Drawing.Size(371, 46);
+            this.lblTittle.TabIndex = 2;
+            this.lblTittle.Text = "INVENTARIO BSN";
             // 
             // label1
             // 
@@ -147,17 +146,6 @@ namespace Inventario
             this.label1.Size = new System.Drawing.Size(58, 21);
             this.label1.TabIndex = 1;
             this.label1.Text = "Tema:";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(263, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // cbThemeSelector
             // 
@@ -205,7 +193,6 @@ namespace Inventario
             this.pnMisc.Controls.Add(this.label13);
             this.pnMisc.Controls.Add(this.label1);
             this.pnMisc.Controls.Add(this.cbThemeSelector);
-            this.pnMisc.Controls.Add(this.button1);
             this.pnMisc.Location = new System.Drawing.Point(460, 10);
             this.pnMisc.Name = "pnMisc";
             this.pnMisc.Size = new System.Drawing.Size(440, 70);
@@ -746,11 +733,10 @@ namespace Inventario
         #endregion
 
         private System.Windows.Forms.Panel pnHeader;
-        private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.Label lblTittle;
         private System.Windows.Forms.Panel pnHeader2;
         private System.Windows.Forms.Panel pnMain;
         private System.Windows.Forms.ComboBox cbThemeSelector;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel pnTarjeta;

@@ -33,7 +33,7 @@ namespace Inventario.View
             this.pnHeader = new System.Windows.Forms.Panel();
             this.pnHeader2 = new System.Windows.Forms.Panel();
             this.lblDate = new System.Windows.Forms.Label();
-            this.lblTitulo = new System.Windows.Forms.Label();
+            this.lblTittle = new System.Windows.Forms.Label();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.flowLyPn = new System.Windows.Forms.FlowLayoutPanel();
@@ -49,7 +49,7 @@ namespace Inventario.View
             // 
             this.pnHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(136)))));
             this.pnHeader.Controls.Add(this.pnHeader2);
-            this.pnHeader.Controls.Add(this.lblTitulo);
+            this.pnHeader.Controls.Add(this.lblTittle);
             this.pnHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnHeader.Location = new System.Drawing.Point(0, 0);
             this.pnHeader.Name = "pnHeader";
@@ -80,17 +80,17 @@ namespace Inventario.View
             this.lblDate.Text = "Date";
             this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lblTitulo
+            // lblTittle
             // 
-            this.lblTitulo.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitulo.ForeColor = System.Drawing.Color.White;
-            this.lblTitulo.Location = new System.Drawing.Point(12, 9);
-            this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(249, 46);
-            this.lblTitulo.TabIndex = 2;
-            this.lblTitulo.Text = "REPORTES";
+            this.lblTittle.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblTittle.AutoSize = true;
+            this.lblTittle.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTittle.ForeColor = System.Drawing.Color.White;
+            this.lblTittle.Location = new System.Drawing.Point(12, 9);
+            this.lblTittle.Name = "lblTittle";
+            this.lblTittle.Size = new System.Drawing.Size(249, 46);
+            this.lblTittle.TabIndex = 2;
+            this.lblTittle.Text = "REPORTES";
             // 
             // btnBack
             // 
@@ -183,7 +183,7 @@ namespace Inventario.View
         private System.Windows.Forms.Panel pnHeader;
         private System.Windows.Forms.Panel pnHeader2;
         private System.Windows.Forms.Label lblDate;
-        private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.Label lblTittle;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.FlowLayoutPanel flowLyPn;

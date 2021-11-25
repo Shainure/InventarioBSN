@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Inventario.Controller;
+﻿using Inventario.Controller;
 using Inventario.View;
+using System;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Inventario
 {
@@ -23,21 +17,17 @@ namespace Inventario
         {
             InitializeComponent();
 
-            //Properties.Settings.Default.Reset();
-
             FillThemeSelector();
             SelectThemeColor();
             DataTextBoxRows();
 
             //Center the tittle (INVENTARIO BSN)
-            this.lblTitulo.Left = (this.pnHeader.Width - lblTitulo.Width) / 2;
-            this.lblTitulo.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTitulo.Height) / 2;
+            this.lblTittle.Left = (this.pnHeader.Width - lblTittle.Width) / 2;
+            this.lblTittle.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTittle.Height) / 2;
 
             this.lblDate.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");
-            lblDate.Left = (this.pnHeader2.Width - lblDate.Width);            
+            lblDate.Left = (this.pnHeader2.Width - lblDate.Width);
         }
-
-
 
         #region -> Methods: Settings mettods
 
@@ -127,7 +117,7 @@ namespace Inventario
 
         #region -> TextBox Events
 
-        //Check if input is a number: All boxes (except "No. Conteo")
+        //Check if input is a number: All TextBoxes (except "tbConteo")
         private void OnlyNumberInput(object sender, KeyPressEventArgs e)
         {
             Char chr = e.KeyChar;                       //Converts the key entered to char
@@ -138,21 +128,62 @@ namespace Inventario
             }
         }
 
-        //Press tab (move to the next TextBox) on Enter key
-        private void TabOnEnterKey(object sender, KeyEventArgs e)
+        #region -> TextBox "tbConteo" Events
+
+        //Checks if this value has already been saved
+        private void CheckConteoValue(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                SendKeys.Send("{TAB}");
+                if (!String.IsNullOrEmpty(tbConteo.Text))
+                {
+                    int conteoValue = Validations.CheckConteoValue("2", tbTarjeta.Text, tbConteo.Text);
+                    if (conteoValue != -1)
+                    {
+                        MessageBox.Show($"¡La tarjeta #{tbTarjeta.Text} en el conteo \"{tbConteo.Text}\" ya fue grabada!\r\n\r\n" +
+                            $"Cantidad ingresada actualmente: {conteoValue}",
+                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    EnableInputFields();
+                    SendKeys.Send("{TAB}");
+                }
             }
         }
 
-        //If the card number changed, clean conteo Number to restart
-        private void CardChanged(object sender, EventArgs e)
+        //Only allows the numbers 1-2-3 as input
+        private void AllowConteo3(object sender, KeyPressEventArgs e)
         {
-            tbConteo.Text = string.Empty;
-            tbConteo.Enabled = false;
+            Char chr = e.KeyChar;
+            int num = e.KeyChar;
+            //8 = backspace, 48 = 0, 51 = 3
+
+            bool AllowConteo3 = Validations.AllowConteo3("1", tbTarjeta.Text);
+            if (AllowConteo3)
+            {
+                if ((!Char.IsDigit(chr) && chr != 8) || (num == 48 || num > 51))
+                {
+                    e.Handled = true;
+                }
+            }
+            else
+            {
+                if ((!Char.IsDigit(chr) && chr != 8) || (num == 48 || num > 50))
+                {
+                    e.Handled = true;
+                    if (tbConteo.Text.Equals("3"))
+                    {
+                        MessageBox.Show($"Tarjeta #{tbTarjeta.Text} no puede tener conteo 3. \r\nFalta conteo 1 o 2",
+                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
         }
+
+        #endregion
+
+        #region -> TextBox "tbTarjeta" Events
+
+        //Other: OnlyNumberInput();
 
         //Check if the card number exist on the DB
         private void CheckCardNumber(object sender, KeyEventArgs e)
@@ -166,7 +197,7 @@ namespace Inventario
                 }
                 else
                 {
-                    var x = Validations.ConsultCard("0", tbTarjeta.Text);
+                    var x = Validations.CheckCard("0", tbTarjeta.Text);
                     if (x.Rows.Count > 0)
                     {
                         tbNart.Text = Convert.ToString(x.Rows[0][0]);
@@ -186,7 +217,27 @@ namespace Inventario
             }
         }
 
-        //Calculate the total
+        //If the card number changed, clean "tbConteo" Number to restart
+        private void CardChanged(object sender, EventArgs e)
+        {
+            tbConteo.Text = string.Empty;
+            tbConteo.Enabled = false;
+        }
+
+        #endregion
+
+        #region -> "Counting" TextBoxes / Values, inside FlowLayoutPanel (flpConteo)
+
+        //Press tab (move to the next TextBox) on Enter key
+        private void TabOnEnterKey(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SendKeys.Send("{TAB}");
+            }
+        }
+
+        //Calculates the total every time an input TextBox is changed
         private void ConteoTbTextChanged(object sender, EventArgs e)
         {
             int total = 0;
@@ -206,7 +257,7 @@ namespace Inventario
                     if (String.IsNullOrEmpty(item.Text))
                     {
                         sum = 0;
-                        break; 
+                        break;
                     }
                     sum *= Convert.ToInt32(item.Text);
                 }
@@ -217,30 +268,9 @@ namespace Inventario
 
         #endregion
 
+        #endregion
+
         #region -> Buttons (Bottom)
-
-        //Methods
-        private void CleanControls()
-        {
-            tbTarjeta.Text = String.Empty;
-            tbConteo.Text = String.Empty;
-
-            foreach (var c in flpConteo.Controls)
-            {
-                if (c is TextBox)
-                {
-                    ((TextBox)c).Text = String.Empty;
-                    ((TextBox)c).Enabled = false;
-                }
-            }
-
-            foreach (var c in pnTabla.Controls)
-                if (c is TextBox) ((TextBox)c).Text = String.Empty;
-
-            tbConteo.Enabled = false;
-        }
-
-        //Events
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -270,45 +300,53 @@ namespace Inventario
             }
             #endregion
 
-            int rows = SaveData.SaveCard("3", tbTarjeta.Text, tbConteo.Text, tbTotal.Text);            
-            if (rows == 1)
-            {
-                if (tbConteo.Text != "3")
-                {
-                    //Check if conteo3 is needed
-                    bool RequestConteo3 = Validations.RequestConteo3("1", tbTarjeta.Text);
-                    //Alert message
-                    if (RequestConteo3)
-                        MessageBox.Show($"La tarjeta #{tbTarjeta.Text} requiere tercer conteo.", "Inventario BSN",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }                
 
-                if (tbConteo.Text.Equals("3"))
+            var confirmation = MessageBox.Show("¿Desea guardar registros?", "Inventario BSN",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button1);
+
+            if (confirmation == System.Windows.Forms.DialogResult.Yes)
+            {
+                int _rows = SaveData.SaveCard("3", tbTarjeta.Text, tbConteo.Text, tbTotal.Text);
+                if (_rows == 1)
                 {
-                    string CompareConteo3 = Validations.ValidateConteo3("1", tbTarjeta.Text);
-                    if (CompareConteo3 != null)
+                    if (tbConteo.Text != "3")
                     {
-                        MessageBox.Show(CompareConteo3, "Inventario BSN",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        //Check if conteo3 is needed
+                        bool RequestConteo3 = Validations.RequestConteo3("1", tbTarjeta.Text);
+
+                        //Alert message
+                        if (RequestConteo3)
+                            MessageBox.Show($"La tarjeta #{tbTarjeta.Text} requiere 3er conteo.", "Inventario BSN",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
-                }                
 
-                CleanControls();
-                tbTarjeta.Focus();
-            }
-            else
-            {
-                string newLine = Environment.NewLine;
-                StringBuilder sb = new StringBuilder();
-                sb.Append($"No se pudo guardar la tarjeta. {newLine}");
-                sb.Append($"Información:{newLine}");
-                sb.Append($"Número de tarjeta: {tbTarjeta.Text} {newLine}");
-                sb.Append($"Número de conteo: {tbConteo.Text} {newLine}");
-                sb.Append($"Total del conteo: {tbTotal.Text}");
-                MessageBox.Show(sb.ToString(), "Inventario BSN",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);            
-            }
+                    if (tbConteo.Text.Equals("3"))
+                    {
+                        string CompareConteo3 = Validations.ValidateConteo3("1", tbTarjeta.Text);
+                        if (CompareConteo3 != null)
+                        {
+                            MessageBox.Show(CompareConteo3, "Inventario BSN",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
 
+                    CleanControls();
+                    tbTarjeta.Focus();
+                }
+                else
+                {
+                    string _newLine = Environment.NewLine;
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"No se pudo guardar la tarjeta. {_newLine}");
+                    sb.Append($"Información:{_newLine}");
+                    sb.Append($"Número de tarjeta: {tbTarjeta.Text} {_newLine}");
+                    sb.Append($"Número de conteo: {tbConteo.Text} {_newLine}");
+                    sb.Append($"Total del conteo: {tbTotal.Text}");
+                    MessageBox.Show(sb.ToString(), "Inventario BSN",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void btnClean_Click(object sender, EventArgs e)
@@ -346,6 +384,10 @@ namespace Inventario
         }
 
         ///  ///  ///  ///  ///  ///  ///  ///
+
+        //          Settings panel         ///
+
+        ///  ///  ///  ///  ///  ///  ///  ///
         private void btnResetSettings_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reset();
@@ -356,67 +398,42 @@ namespace Inventario
 
         #endregion
 
-        private void AllowConteo3(object sender, KeyPressEventArgs e)
-        {
-            Char chr = e.KeyChar;
-            int num = e.KeyChar;
-            //8 = backspace, 48 = 0, 51 = 3
+        #region -> Private methods
 
-            bool AllowConteo3 = Validations.AllowConteo3("1", tbTarjeta.Text);
-            if (AllowConteo3)
-            {
-                if ((!Char.IsDigit(chr) && chr != 8) || (num == 48 || num > 51))
-                {
-                    e.Handled = true;
-                }
-            }
-            else
-            {
-                if ((!Char.IsDigit(chr) && chr != 8) || (num == 48 || num > 50))
-                {
-                    e.Handled = true;
-                    if (tbConteo.Text.Equals("3"))
-                    {
-                        MessageBox.Show($"Tarjeta #{tbTarjeta.Text} no puede tener conteo 3. \r\nFalta conteo 1 o 2",
-                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                }
-            }
-        }
-
-        private void CheckConteoValue(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (!String.IsNullOrEmpty(tbConteo.Text))
-                {
-                    int conteoValue = Validations.CheckConteoValue("2", tbTarjeta.Text, tbConteo.Text);
-                    if (conteoValue != -1)
-                    {
-                        MessageBox.Show($"¡La tarjeta #{tbTarjeta.Text} ya fue grabada!\r\n" +
-                            $"Valor actual: {conteoValue}",
-                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    EnableInputFields();
-                    SendKeys.Send("{TAB}");
-                }                
-            }
-        }
-
+        // Enable "Counting" TextBoxes inside FlowLayoutPanel (flpConteo)
         private void EnableInputFields()
         {
             foreach (var c in flpConteo.Controls)
             {
                 if (c is TextBox)
                 {
-                    ((TextBox)c).Enabled = true;                    
+                    ((TextBox)c).Enabled = true;
                 }
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        //Clean all the TextBoxes
+        private void CleanControls()
         {
-            bool RequestConteo3 = Validations.RequestConteo3("1", tbTarjeta.Text);
+            tbTarjeta.Text = String.Empty;
+            tbConteo.Text = String.Empty;
+
+            foreach (var c in flpConteo.Controls)
+            {
+                if (c is TextBox)
+                {
+                    ((TextBox)c).Text = String.Empty;
+                    ((TextBox)c).Enabled = false;
+                }
+            }
+            foreach (var c in pnTabla.Controls)
+                if (c is TextBox) ((TextBox)c).Text = String.Empty;
+
+            tbConteo.Enabled = false;
         }
+
+        #endregion
+
+
     }
 }

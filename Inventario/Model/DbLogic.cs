@@ -1,11 +1,8 @@
-﻿using Inventario.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Inventario.Model
@@ -19,7 +16,6 @@ namespace Inventario.Model
         // ****SELECT* Stored procedure - List of params
         public static DataTable SqlStoredProcedure(ReportModel reportInfo)
         {
-
             try
             {
                 using (SqlConnection myConn = new SqlConnection(conString))
@@ -80,22 +76,7 @@ namespace Inventario.Model
             }
         }
 
-
-        // Aviso, no se encontraron datos para generar el reporte
-        private static bool avisoSinDatos(SqlDataReader mdr)
-        {
-            if (mdr.HasRows)
-                return true;
-            else
-            {
-                MessageBox.Show("No se encontró información para generar el reporte.", "Inventario BSN",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                //sqlDB.CloseConnection();
-                return false;
-            }
-        }
-
-
+        //Builds a detailed string for the error message
         private static void SqlError(SqlException ex)
         {
             StringBuilder errorMessages = new StringBuilder();

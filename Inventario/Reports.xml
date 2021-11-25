@@ -19,7 +19,7 @@
 			<rptTitulo>Consolidado conteo</rptTitulo>
 			<rptNombrePag>Consolidado</rptNombrePag>
 			<procedureQuery>rpt_consolidado_conteo</procedureQuery>
-			<totales>true</totales>
+			<totales>false</totales>
 		</reporte>
 
 		<reporte>
