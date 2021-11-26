@@ -175,9 +175,9 @@ namespace Inventario
                     int conteoValue = Validations.CheckConteoValue("2", tbTarjeta.Text, tbConteo.Text);
                     if (conteoValue != -1)
                     {
-                        MessageBox.Show($"¡La tarjeta #{tbTarjeta.Text} en el conteo \"{tbConteo.Text}\" ya fue grabada!\r\n\r\n" +
-                            $"Cantidad ingresada actualmente: {conteoValue}",
-                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"¡Conteo {tbConteo.Text} de la tarjeta No. {tbTarjeta.Text} ya fue grabada!\r\n\r\n" +
+                            $"Cantidad ingresada: {conteoValue}",
+                            "Inventario BSN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     EnableInputFields();
                     SendKeys.Send("{TAB}");
@@ -336,7 +336,7 @@ namespace Inventario
             #endregion
 
 
-            var confirmation = MessageBox.Show("¿Desea guardar registros?", "Inventario BSN",
+            var confirmation = MessageBox.Show("¿Desea guardar?", "Inventario BSN",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1);
 
@@ -352,7 +352,7 @@ namespace Inventario
 
                         //Alert message
                         if (RequestConteo3)
-                            MessageBox.Show($"La tarjeta #{tbTarjeta.Text} requiere 3er conteo.", "Inventario BSN",
+                            MessageBox.Show($"La tarjeta No. {tbTarjeta.Text} requiere 3er conteo.", "Inventario BSN",
                                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
 
@@ -362,7 +362,7 @@ namespace Inventario
                         if (CompareConteo3 != null)
                         {
                             MessageBox.Show(CompareConteo3, "Inventario BSN",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 

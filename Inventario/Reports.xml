@@ -47,7 +47,7 @@
 			<rptTitulo>Total conteo y foto cierre</rptTitulo>
 			<rptNombrePag>Totales</rptNombrePag>
 			<procedureQuery>rpt_total_conteo_cierre</procedureQuery>
-			<totales>false</totales>
+			<totales>true</totales>
 		</reporte>
 		
 		<reporte>

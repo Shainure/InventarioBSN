@@ -49,7 +49,7 @@ namespace Inventario.Controller
             else
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"¡Conteo 3 de la tarjeta {_params[0]} es diferente a los otros conteos!\r\n");
+                sb.AppendLine($"¡Conteo 3 de la tarjeta No. {_params[0]} es diferente a los otros conteos!\r\n");
                 sb.AppendLine($"Conteo 1 = {conteo1}");
                 sb.AppendLine($"Conteo 2 = {conteo2}");
                 sb.AppendLine($"Conteo 3 = {conteo3}");
