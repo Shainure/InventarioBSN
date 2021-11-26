@@ -49,15 +49,6 @@ namespace Inventario
             this.btnSave = new System.Windows.Forms.Button();
             this.pnConteo = new System.Windows.Forms.Panel();
             this.flpConteo = new System.Windows.Forms.FlowLayoutPanel();
-            this.tb11 = new System.Windows.Forms.TextBox();
-            this.tb12 = new System.Windows.Forms.TextBox();
-            this.tb13 = new System.Windows.Forms.TextBox();
-            this.tb21 = new System.Windows.Forms.TextBox();
-            this.tb22 = new System.Windows.Forms.TextBox();
-            this.tb23 = new System.Windows.Forms.TextBox();
-            this.tb31 = new System.Windows.Forms.TextBox();
-            this.tb32 = new System.Windows.Forms.TextBox();
-            this.tb33 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tbTotal = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -84,7 +75,6 @@ namespace Inventario
             this.pnMain.SuspendLayout();
             this.pnMisc.SuspendLayout();
             this.pnConteo.SuspendLayout();
-            this.flpConteo.SuspendLayout();
             this.pnTabla.SuspendLayout();
             this.pnTarjeta.SuspendLayout();
             this.SuspendLayout();
@@ -167,7 +157,7 @@ namespace Inventario
             // 
             // pnMain
             // 
-            this.pnMain.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.pnMain.BackColor = System.Drawing.Color.LightGray;
             this.pnMain.Controls.Add(this.pnMisc);
             this.pnMain.Controls.Add(this.btnClose);
             this.pnMain.Controls.Add(this.btnReports);
@@ -232,7 +222,7 @@ namespace Inventario
             this.cbDataRows.Name = "cbDataRows";
             this.cbDataRows.Size = new System.Drawing.Size(63, 24);
             this.cbDataRows.TabIndex = 6;
-            this.cbDataRows.SelectedIndexChanged += new System.EventHandler(this.cbDataRows_SelectedIndexChanged);
+            this.cbDataRows.DropDownClosed += new System.EventHandler(this.cbDataRows_DropDownClosed);
             // 
             // label13
             // 
@@ -308,6 +298,7 @@ namespace Inventario
             // 
             // pnConteo
             // 
+            this.pnConteo.AutoScroll = true;
             this.pnConteo.BackColor = System.Drawing.Color.Transparent;
             this.pnConteo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnConteo.Controls.Add(this.flpConteo);
@@ -323,152 +314,19 @@ namespace Inventario
             // 
             // flpConteo
             // 
-            this.flpConteo.Controls.Add(this.tb11);
-            this.flpConteo.Controls.Add(this.tb12);
-            this.flpConteo.Controls.Add(this.tb13);
-            this.flpConteo.Controls.Add(this.tb21);
-            this.flpConteo.Controls.Add(this.tb22);
-            this.flpConteo.Controls.Add(this.tb23);
-            this.flpConteo.Controls.Add(this.tb31);
-            this.flpConteo.Controls.Add(this.tb32);
-            this.flpConteo.Controls.Add(this.tb33);
-            this.flpConteo.Location = new System.Drawing.Point(21, 33);
+            this.flpConteo.AutoScroll = true;
+            this.flpConteo.Location = new System.Drawing.Point(16, 31);
+            this.flpConteo.Margin = new System.Windows.Forms.Padding(0);
             this.flpConteo.Name = "flpConteo";
-            this.flpConteo.Size = new System.Drawing.Size(390, 112);
+            this.flpConteo.Size = new System.Drawing.Size(415, 118);
             this.flpConteo.TabIndex = 14;
-            // 
-            // tb11
-            // 
-            this.tb11.Enabled = false;
-            this.tb11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb11.Location = new System.Drawing.Point(15, 3);
-            this.tb11.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb11.Name = "tb11";
-            this.tb11.Size = new System.Drawing.Size(100, 22);
-            this.tb11.TabIndex = 0;
-            this.tb11.Tag = "0";
-            this.tb11.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb11.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb11.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb12
-            // 
-            this.tb12.Enabled = false;
-            this.tb12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb12.Location = new System.Drawing.Point(145, 3);
-            this.tb12.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb12.Name = "tb12";
-            this.tb12.Size = new System.Drawing.Size(100, 22);
-            this.tb12.TabIndex = 1;
-            this.tb12.Tag = "0";
-            this.tb12.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb12.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb12.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb13
-            // 
-            this.tb13.Enabled = false;
-            this.tb13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb13.Location = new System.Drawing.Point(275, 3);
-            this.tb13.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb13.Name = "tb13";
-            this.tb13.Size = new System.Drawing.Size(100, 22);
-            this.tb13.TabIndex = 2;
-            this.tb13.Tag = "0";
-            this.tb13.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb13.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb13.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb21
-            // 
-            this.tb21.Enabled = false;
-            this.tb21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb21.Location = new System.Drawing.Point(15, 31);
-            this.tb21.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb21.Name = "tb21";
-            this.tb21.Size = new System.Drawing.Size(100, 22);
-            this.tb21.TabIndex = 3;
-            this.tb21.Tag = "1";
-            this.tb21.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb21.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb21.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb22
-            // 
-            this.tb22.Enabled = false;
-            this.tb22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb22.Location = new System.Drawing.Point(145, 31);
-            this.tb22.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb22.Name = "tb22";
-            this.tb22.Size = new System.Drawing.Size(100, 22);
-            this.tb22.TabIndex = 4;
-            this.tb22.Tag = "1";
-            this.tb22.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb22.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb22.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb23
-            // 
-            this.tb23.Enabled = false;
-            this.tb23.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb23.Location = new System.Drawing.Point(275, 31);
-            this.tb23.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb23.Name = "tb23";
-            this.tb23.Size = new System.Drawing.Size(100, 22);
-            this.tb23.TabIndex = 5;
-            this.tb23.Tag = "1";
-            this.tb23.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb23.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb23.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb31
-            // 
-            this.tb31.Enabled = false;
-            this.tb31.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb31.Location = new System.Drawing.Point(15, 59);
-            this.tb31.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb31.Name = "tb31";
-            this.tb31.Size = new System.Drawing.Size(100, 22);
-            this.tb31.TabIndex = 6;
-            this.tb31.Tag = "2";
-            this.tb31.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb31.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb31.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb32
-            // 
-            this.tb32.Enabled = false;
-            this.tb32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb32.Location = new System.Drawing.Point(145, 59);
-            this.tb32.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb32.Name = "tb32";
-            this.tb32.Size = new System.Drawing.Size(100, 22);
-            this.tb32.TabIndex = 7;
-            this.tb32.Tag = "2";
-            this.tb32.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb32.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb32.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
-            // 
-            // tb33
-            // 
-            this.tb33.Enabled = false;
-            this.tb33.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb33.Location = new System.Drawing.Point(275, 59);
-            this.tb33.Margin = new System.Windows.Forms.Padding(15, 3, 15, 3);
-            this.tb33.Name = "tb33";
-            this.tb33.Size = new System.Drawing.Size(100, 22);
-            this.tb33.TabIndex = 8;
-            this.tb33.Tag = "2";
-            this.tb33.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
-            this.tb33.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
-            this.tb33.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(193, 148);
+            this.label5.Location = new System.Drawing.Point(193, 152);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(116, 20);
             this.label5.TabIndex = 10;
@@ -479,7 +337,7 @@ namespace Inventario
             this.tbTotal.Enabled = false;
             this.tbTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbTotal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tbTotal.Location = new System.Drawing.Point(315, 148);
+            this.tbTotal.Location = new System.Drawing.Point(315, 152);
             this.tbTotal.Name = "tbTotal";
             this.tbTotal.Size = new System.Drawing.Size(100, 22);
             this.tbTotal.TabIndex = 9;
@@ -489,7 +347,7 @@ namespace Inventario
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(163, 12);
+            this.label4.Location = new System.Drawing.Point(163, 6);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(117, 18);
             this.label4.TabIndex = 12;
@@ -500,7 +358,7 @@ namespace Inventario
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Black;
-            this.label6.Location = new System.Drawing.Point(293, 12);
+            this.label6.Location = new System.Drawing.Point(293, 6);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(110, 18);
             this.label6.TabIndex = 13;
@@ -511,7 +369,7 @@ namespace Inventario
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(39, 12);
+            this.label11.Location = new System.Drawing.Point(39, 6);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(69, 18);
             this.label11.TabIndex = 11;
@@ -720,8 +578,6 @@ namespace Inventario
             this.pnMisc.PerformLayout();
             this.pnConteo.ResumeLayout(false);
             this.pnConteo.PerformLayout();
-            this.flpConteo.ResumeLayout(false);
-            this.flpConteo.PerformLayout();
             this.pnTabla.ResumeLayout(false);
             this.pnTabla.PerformLayout();
             this.pnTarjeta.ResumeLayout(false);
@@ -758,18 +614,9 @@ namespace Inventario
         private System.Windows.Forms.Panel pnConteo;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbTotal;
-        private System.Windows.Forms.TextBox tb33;
-        private System.Windows.Forms.TextBox tb32;
-        private System.Windows.Forms.TextBox tb31;
-        private System.Windows.Forms.TextBox tb23;
-        private System.Windows.Forms.TextBox tb22;
-        private System.Windows.Forms.TextBox tb21;
-        private System.Windows.Forms.TextBox tb13;
-        private System.Windows.Forms.TextBox tb12;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox tb11;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnReports;

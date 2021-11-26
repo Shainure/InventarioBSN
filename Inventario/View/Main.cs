@@ -21,7 +21,7 @@ namespace Inventario
             SelectThemeColor();
             DataTextBoxRows();
 
-            //Center the tittle (INVENTARIO BSN)
+            //Center the tittle
             this.lblTittle.Left = (this.pnHeader.Width - lblTittle.Width) / 2;
             this.lblTittle.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTittle.Height) / 2;
 
@@ -39,13 +39,48 @@ namespace Inventario
             {
                 this.cbDataRows.Items.Add(i);
             }
-            this.cbDataRows.SelectedItem = Properties.Settings.Default.DataRows;
+
+            int CurrentDataRows = Properties.Settings.Default.DataRows;
+            this.cbDataRows.SelectedItem = CurrentDataRows;
+            GenerateInputTbs(CurrentDataRows);
         }
 
-        private void cbDataRows_SelectedIndexChanged(object sender, EventArgs e)
+        private void GenerateInputTbs(int dataRows)
+        {
+            this.flpConteo.Controls.Clear();
+            int tabIndex = 1;
+            int tagIndex = 0;
+            for (int i = 0; i < dataRows; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    //Create new TextBox and initialize
+                    TextBox textBox = new TextBox()
+                    {
+
+                        Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0))),
+                        Enabled = false,
+                        Margin = new Padding(15, 3, 15, 3),
+                        Size = new System.Drawing.Size(100, 22),
+                        Tag = Convert.ToString(tagIndex),
+                        TabIndex = tabIndex++
+                    };
+
+                    textBox.TextChanged += new System.EventHandler(this.ConteoTbTextChanged);
+                    textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabOnEnterKey);
+                    textBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnlyNumberInput);
+
+                    flpConteo.Controls.Add(textBox);
+                }
+                tagIndex++;
+            }
+        }
+
+        private void cbDataRows_DropDownClosed(object sender, EventArgs e)
         {
             Properties.Settings.Default.DataRows = Convert.ToInt32(this.cbDataRows.SelectedItem);
             Properties.Settings.Default.Save();
+            DataTextBoxRows();
         }
 
         #endregion
@@ -81,7 +116,7 @@ namespace Inventario
             {
                 //Value in decimals (0.1, 0.05, -0.1, 0.3) (percentages)
                 // value < 0 = darker, value > 0 = lighter
-                this.pnHeader2.BackColor = Themes.ChangeColorBrightness(color, -0.2);
+                this.pnHeader2.BackColor = Themes.ChangeColorBrightness(color, -0.2);                
             }
         }
 
@@ -432,8 +467,9 @@ namespace Inventario
             tbConteo.Enabled = false;
         }
 
+
         #endregion
 
-
+        
     }
 }
