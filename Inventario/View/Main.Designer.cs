@@ -248,6 +248,7 @@ namespace Inventario
             // 
             // btnReports
             // 
+            this.btnReports.Enabled = false;
             this.btnReports.Font = new System.Drawing.Font("Century Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnReports.Location = new System.Drawing.Point(615, 292);
             this.btnReports.Name = "btnReports";
@@ -259,6 +260,7 @@ namespace Inventario
             // 
             // btnConsolidate
             // 
+            this.btnConsolidate.Enabled = false;
             this.btnConsolidate.Font = new System.Drawing.Font("Century Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnConsolidate.Location = new System.Drawing.Point(460, 292);
             this.btnConsolidate.Name = "btnConsolidate";
@@ -347,7 +349,7 @@ namespace Inventario
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(163, 6);
+            this.label4.Location = new System.Drawing.Point(150, 6);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(117, 18);
             this.label4.TabIndex = 12;
@@ -360,9 +362,9 @@ namespace Inventario
             this.label6.ForeColor = System.Drawing.Color.Black;
             this.label6.Location = new System.Drawing.Point(293, 6);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 18);
+            this.label6.Size = new System.Drawing.Size(81, 18);
             this.label6.TabIndex = 13;
-            this.label6.Text = "Und. x tendidos";
+            this.label6.Text = "Und. x caja";
             // 
             // label11
             // 

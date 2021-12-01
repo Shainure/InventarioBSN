@@ -20,11 +20,13 @@ namespace Inventario
             FillThemeSelector();
             SelectThemeColor();
             DataTextBoxRows();
+            EnableAdminBtn();
 
             //Center the tittle
             this.lblTittle.Left = (this.pnHeader.Width - lblTittle.Width) / 2;
             this.lblTittle.Top = ((this.pnHeader.Height - this.pnHeader2.Height) - lblTittle.Height) / 2;
 
+            //Set date label
             this.lblDate.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");
             lblDate.Left = (this.pnHeader2.Width - lblDate.Width);
         }
@@ -35,6 +37,7 @@ namespace Inventario
         private void DataTextBoxRows()
         {
             this.cbDataRows.Items.Clear();
+            this.tbTotal.Text = string.Empty;
             for (int i = 3; i <= 10; i++)
             {
                 this.cbDataRows.Items.Add(i);
@@ -307,6 +310,15 @@ namespace Inventario
 
         #region -> Buttons (Bottom)
 
+        private void EnableAdminBtn()
+        {
+            if (Program.AdmBtn)
+            {
+                btnReports.Enabled = true;
+                btnConsolidate.Enabled = true;
+            }
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             #region -> Error handling (Empty or 0) 
@@ -345,6 +357,8 @@ namespace Inventario
                 int _rows = SaveData.SaveCard("3", tbTarjeta.Text, tbConteo.Text, tbTotal.Text);
                 if (_rows == 1)
                 {
+                    MessageBox.Show($"Se guardaron los datos.", "Inventario BSN",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     if (tbConteo.Text != "3")
                     {
                         //Check if conteo3 is needed
